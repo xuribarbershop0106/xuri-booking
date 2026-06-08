@@ -1,0 +1,1581 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>汿日理髮廳 · 線上預約</title>
+<style>
+
+:root {
+  --cream: #f5f0e8;
+  --cream-dark: #ede7d9;
+  --warm-white: #faf8f4;
+  --gold: #b8945a;
+  --gold-light: #d4ae78;
+  --gold-dark: #8a6b3a;
+  --brown: #5c3d2e;
+  --brown-light: #8b6550;
+  --text-dark: #2c1f14;
+  --text-mid: #5a4030;
+  --text-light: #8a7060;
+  --border: #ddd5c5;
+  --shadow: rgba(92,61,46,0.12);
+  --yujun-color: #c9b0b0;
+  --xien-color: #8aa4b8;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+  font-family: 'Noto Serif TC', serif;
+  background: var(--warm-white);
+  color: var(--text-dark);
+  min-height: 100vh;
+}
+
+/* ─── HEADER ─── */
+header {
+  background: var(--cream);
+  border-bottom: 1px solid var(--border);
+  padding: 20px 24px 16px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 2px 12px var(--shadow);
+}
+.header-inner {
+  max-width: 680px;
+  margin: 0 auto;
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+.shop-name-zh {
+  font-family: 'Noto Serif TC', serif;
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--text-dark);
+  letter-spacing: 2px;
+}
+.shop-name-en {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 11px;
+  font-weight: 400;
+  color: var(--text-light);
+  letter-spacing: 3px;
+  text-transform: uppercase;
+}
+
+/* ─── MAIN ─── */
+main { max-width: 680px; margin: 0 auto; padding: 0 16px 60px; }
+
+/* ─── SECTION TITLE ─── */
+.section-label {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 11px;
+  letter-spacing: 4px;
+  color: var(--gold);
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+.section-title {
+  font-size: 28px;
+  font-weight: 600;
+  color: var(--text-dark);
+  margin-bottom: 8px;
+}
+.section-divider {
+  width: 40px;
+  height: 2px;
+  background: var(--gold);
+  margin-bottom: 20px;
+}
+
+/* ─── INTRO BLOCK ─── */
+.intro-block {
+  padding: 32px 0 0;
+  margin-bottom: 8px;
+}
+.intro-desc {
+  font-size: 14px;
+  line-height: 1.9;
+  color: var(--text-mid);
+  margin-bottom: 20px;
+}
+.info-grid {
+  display: grid;
+  gap: 10px;
+  margin-bottom: 24px;
+}
+.info-row {
+  display: flex;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--text-mid);
+  line-height: 1.7;
+}
+.info-label {
+  font-weight: 600;
+  color: var(--brown);
+  white-space: nowrap;
+  min-width: 70px;
+}
+
+/* ─── LINKS ─── */
+.contact-links {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  margin-bottom: 28px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  overflow: hidden;
+}
+.contact-link-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px 18px;
+  background: var(--cream);
+  border-bottom: 1px solid var(--border);
+  text-decoration: none;
+  transition: background 0.15s;
+  cursor: pointer;
+}
+.contact-link-item:last-child { border-bottom: none; }
+.contact-link-item:hover { background: var(--cream-dark); }
+.contact-link-icon {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border: 1.5px solid var(--gold);
+  background: var(--warm-white);
+}
+.contact-link-icon svg {
+  width: 18px;
+  height: 18px;
+  stroke: var(--gold-dark);
+  fill: none;
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.contact-link-text { flex: 1; }
+.contact-link-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-dark);
+  letter-spacing: 0.5px;
+  display: block;
+}
+.contact-link-sub {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 11px;
+  color: var(--text-light);
+  letter-spacing: 2px;
+  display: block;
+  margin-top: 1px;
+}
+.contact-link-arrow {
+  color: var(--gold);
+  font-size: 16px;
+  flex-shrink: 0;
+}
+
+/* ─── BARBERS ─── */
+.barbers-section {
+  margin-bottom: 32px;
+}
+.barber-card {
+  background: var(--cream);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 24px;
+  margin-bottom: 14px;
+  text-align: center;
+}
+.barber-avatar {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 12px;
+  font-size: 22px;
+}
+.barber-avatar.yujun { background: var(--yujun-color); }
+.barber-avatar.xien { background: var(--xien-color); }
+.barber-role {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 11px;
+  letter-spacing: 3px;
+  color: var(--gold);
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+.barber-name {
+  font-size: 24px;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+.barber-note {
+  background: var(--warm-white);
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 13px;
+  color: var(--text-mid);
+  line-height: 1.8;
+}
+.barber-note-en {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 12px;
+  color: var(--text-light);
+  font-style: italic;
+  display: block;
+  margin-top: 3px;
+}
+
+/* ─── SERVICE MENU ─── */
+.service-section {
+  margin-bottom: 32px;
+}
+.service-menu {
+  background: var(--cream);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  overflow: hidden;
+}
+.service-menu-header {
+  padding: 16px 20px;
+  background: var(--brown);
+  color: var(--cream);
+}
+.service-menu-header h3 {
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 1px;
+}
+.service-menu-header p {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 12px;
+  color: var(--gold-light);
+  letter-spacing: 2px;
+  margin-top: 2px;
+}
+.service-item-row {
+  padding: 14px 20px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+}
+.service-item-row:last-child { border-bottom: none; }
+.service-item-info { flex: 1; }
+.service-item-name-zh {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-dark);
+  margin-bottom: 2px;
+}
+.service-item-name-en {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 12px;
+  color: var(--text-light);
+  letter-spacing: 1px;
+}
+.service-item-sub {
+  font-size: 12px;
+  color: var(--text-light);
+  margin-top: 4px;
+  line-height: 1.6;
+}
+.service-price {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--gold-dark);
+  white-space: nowrap;
+}
+.service-note {
+  padding: 12px 20px;
+  font-size: 12px;
+  color: var(--text-light);
+  line-height: 1.7;
+  background: var(--warm-white);
+}
+.discount-note {
+  margin-top: 10px;
+  padding: 12px 16px;
+  background: #fdf9f2;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  font-size: 13px;
+  color: var(--text-mid);
+  line-height: 1.8;
+}
+
+/* ─── BOOKING FORM ─── */
+.booking-section { margin-bottom: 32px; }
+.booking-card {
+  background: var(--cream);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 24px;
+}
+.form-group { margin-bottom: 20px; }
+.form-label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-mid);
+  margin-bottom: 4px;
+}
+.form-label-en {
+  display: block;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 11px;
+  letter-spacing: 2px;
+  color: var(--text-light);
+  margin-bottom: 8px;
+}
+.form-label span.req { color: var(--gold-dark); }
+.form-input, .form-select, .form-textarea {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--warm-white);
+  font-family: 'Noto Serif TC', serif;
+  font-size: 14px;
+  color: var(--text-dark);
+  transition: border-color 0.2s, box-shadow 0.2s;
+  appearance: none;
+}
+.form-input:focus, .form-select:focus, .form-textarea:focus {
+  outline: none;
+  border-color: var(--gold);
+  box-shadow: 0 0 0 3px rgba(184,148,90,0.15);
+}
+.form-select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%238a6b3a' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  padding-right: 36px;
+}
+.form-textarea { min-height: 80px; resize: vertical; }
+
+/* name row */
+.name-row { display: grid; grid-template-columns: 120px 1fr; gap: 10px; }
+
+/* calendar */
+.calendar-wrapper {
+  background: var(--warm-white);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+}
+.cal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  background: var(--brown);
+  color: var(--cream);
+}
+.cal-nav-btn {
+  background: none;
+  border: none;
+  color: var(--cream);
+  cursor: pointer;
+  font-size: 18px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+}
+.cal-nav-btn:hover { background: rgba(255,255,255,0.15); }
+.cal-month-title {
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 2px;
+}
+.cal-weekdays {
+  display: grid;
+  grid-template-columns: repeat(7,1fr);
+  padding: 8px 0 4px;
+  background: var(--cream-dark);
+}
+.cal-weekday {
+  text-align: center;
+  font-size: 11px;
+  color: var(--text-light);
+  font-family: 'Cormorant Garamond', serif;
+  letter-spacing: 1px;
+}
+.cal-days {
+  display: grid;
+  grid-template-columns: repeat(7,1fr);
+  padding: 4px 6px 8px;
+  gap: 2px;
+}
+.cal-day {
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+  position: relative;
+}
+.cal-day.empty { pointer-events: none; }
+.cal-day.disabled {
+  color: #ccc;
+  pointer-events: none;
+}
+.cal-day.today {
+  border: 1px solid var(--gold);
+  font-weight: 600;
+}
+.cal-day:not(.disabled):not(.empty):hover {
+  background: var(--gold-light);
+  color: white;
+}
+.cal-day.selected {
+  background: var(--gold-dark);
+  color: white;
+  font-weight: 600;
+}
+.cal-day.closed {
+  color: #bbb;
+  pointer-events: none;
+  text-decoration: line-through;
+}
+
+/* time slots */
+.time-slots-wrapper {
+  margin-top: 10px;
+  background: var(--warm-white);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 14px;
+}
+.time-slots-title {
+  font-size: 12px;
+  color: var(--text-light);
+  margin-bottom: 10px;
+  font-family: 'Cormorant Garamond', serif;
+  letter-spacing: 2px;
+}
+.time-slots-grid {
+  display: grid;
+  grid-template-columns: repeat(4,1fr);
+  gap: 6px;
+}
+.time-slot-btn {
+  padding: 8px 4px;
+  text-align: center;
+  font-size: 13px;
+  font-family: 'Noto Serif TC', serif;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  cursor: pointer;
+  background: var(--cream);
+  color: var(--text-dark);
+  transition: all 0.15s;
+}
+.time-slot-btn:hover:not(.taken):not(.blocked) {
+  background: var(--gold-light);
+  color: white;
+  border-color: var(--gold-light);
+}
+.time-slot-btn.selected {
+  background: var(--gold-dark);
+  color: white;
+  border-color: var(--gold-dark);
+}
+.time-slot-btn.taken {
+  background: #eee;
+  color: #bbb;
+  pointer-events: none;
+  text-decoration: line-through;
+}
+.time-slot-btn.blocked {
+  background: #f5f5f5;
+  color: #ccc;
+  pointer-events: none;
+}
+
+/* submit */
+.submit-btn {
+  width: 100%;
+  padding: 16px;
+  background: var(--brown);
+  color: var(--cream);
+  border: none;
+  border-radius: 10px;
+  font-family: 'Noto Serif TC', serif;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  letter-spacing: 2px;
+  transition: background 0.2s, transform 0.1s;
+  margin-top: 8px;
+}
+.submit-btn:hover { background: var(--gold-dark); }
+.submit-btn:active { transform: scale(0.99); }
+
+/* ─── MODAL ─── */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(44,31,20,0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+  padding: 20px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s;
+}
+.modal-overlay.active { opacity: 1; pointer-events: all; }
+.modal-box {
+  background: var(--warm-white);
+  border-radius: 16px;
+  padding: 28px 24px;
+  max-width: 420px;
+  width: 100%;
+  max-height: 85vh;
+  overflow-y: auto;
+  transform: translateY(20px);
+  transition: transform 0.2s;
+}
+.modal-overlay.active .modal-box { transform: translateY(0); }
+.modal-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-dark);
+  margin-bottom: 4px;
+}
+.modal-title-en {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 12px;
+  letter-spacing: 3px;
+  color: var(--text-light);
+  margin-bottom: 18px;
+  display: block;
+}
+.confirm-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 14px;
+}
+.confirm-row:last-of-type { border-bottom: none; }
+.confirm-key { color: var(--text-light); }
+.confirm-val { font-weight: 600; color: var(--text-dark); text-align: right; max-width: 60%; }
+.modal-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 20px;
+}
+.modal-btn {
+  padding: 12px;
+  border-radius: 8px;
+  font-family: 'Noto Serif TC', serif;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  transition: background 0.2s;
+}
+.modal-btn.cancel-btn {
+  background: var(--cream-dark);
+  color: var(--text-mid);
+}
+.modal-btn.cancel-btn:hover { background: var(--border); }
+.modal-btn.confirm-btn {
+  background: var(--brown);
+  color: var(--cream);
+}
+.modal-btn.confirm-btn:hover { background: var(--gold-dark); }
+
+/* ─── SUCCESS ─── */
+.success-box {
+  background: var(--cream);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 28px 24px;
+  text-align: center;
+  display: none;
+}
+.success-icon { font-size: 40px; margin-bottom: 14px; }
+.success-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text-dark);
+  margin-bottom: 6px;
+}
+.success-title-en {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 13px;
+  letter-spacing: 3px;
+  color: var(--text-light);
+  margin-bottom: 18px;
+  display: block;
+}
+.success-info {
+  background: var(--warm-white);
+  border-radius: 10px;
+  padding: 16px;
+  text-align: left;
+  margin-bottom: 18px;
+  font-size: 14px;
+  line-height: 2;
+  color: var(--text-mid);
+}
+.screenshot-note {
+  font-size: 13px;
+  color: var(--text-light);
+  margin-bottom: 16px;
+  line-height: 1.7;
+}
+.line-link-btn {
+  display: inline-block;
+  padding: 12px 24px;
+  background: #06c755;
+  color: white;
+  border-radius: 8px;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  transition: background 0.2s;
+}
+.line-link-btn:hover { background: #05a845; }
+.gcal-btn {
+  display: inline-block;
+  padding: 10px 20px;
+  background: var(--cream-dark);
+  color: var(--text-mid);
+  border-radius: 8px;
+  text-decoration: none;
+  font-size: 13px;
+  margin-top: 10px;
+  cursor: pointer;
+  border: 1px solid var(--border);
+  width: 100%;
+  text-align: center;
+  transition: background 0.2s;
+}
+.gcal-btn:hover { background: var(--border); }
+
+/* ─── ERROR ─── */
+.field-error {
+  font-size: 12px;
+  color: #c0392b;
+  margin-top: 4px;
+  display: none;
+}
+.has-error .form-input,
+.has-error .form-select,
+.has-error .form-textarea {
+  border-color: #c0392b;
+}
+.has-error .field-error { display: block; }
+
+/* notice */
+.notice {
+  background: #fdf9ef;
+  border: 1px solid #e8d9b5;
+  border-radius: 8px;
+  padding: 12px 14px;
+  font-size: 13px;
+  color: var(--text-mid);
+  margin-bottom: 18px;
+  line-height: 1.7;
+}
+.notice-en {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 12px;
+  color: var(--text-light);
+  font-style: italic;
+  display: block;
+  margin-top: 4px;
+}
+.banned-notice {
+  background: #fdf0f0;
+  border: 1px solid #f0b8b8;
+  border-radius: 8px;
+  padding: 14px;
+  font-size: 14px;
+  color: #8b2020;
+  margin-bottom: 16px;
+  line-height: 1.7;
+  display: none;
+}
+.special-promo {
+  background: linear-gradient(135deg, #f0ebe0, #e8ddd0);
+  border: 1px solid var(--gold-light);
+  border-radius: 8px;
+  padding: 12px 14px;
+  margin-bottom: 14px;
+  font-size: 13px;
+  color: var(--brown);
+}
+.special-promo strong {
+  display: block;
+  font-size: 14px;
+  color: var(--gold-dark);
+  margin-bottom: 3px;
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <span class="shop-name-zh">汿日理髮廳</span>
+    <span class="shop-name-en">XURI BARBER SHOP</span>
+  </div>
+</header>
+
+<main>
+
+  <!-- Intro -->
+  <div class="intro-block">
+    <div class="section-label">ABOUT US</div>
+    <div class="section-title">關於我們</div>
+    <div class="section-divider"></div>
+    <div class="intro-desc">
+      我們是一家有溫度的男士髮型專門店<br>
+      在這裡你可以好好的放鬆心情，享受舒適的氛圍<br>
+      用心聆聽你的需求，細心打理每一處細節
+    </div>
+    <div class="info-grid">
+      <div class="info-row">
+        <span class="info-label">電話</span>
+        <span>(04) 2656-8056</span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">地址</span>
+        <span>台中市梧棲區文昌路310號</span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">營業時間</span>
+        <div>
+          週二、四、五、六　10:00 – 21:00<br>
+          週一、三、日　10:00 – 20:00
+        </div>
+      </div>
+    </div>
+
+    <div class="contact-links">
+      <a class="contact-link-item" href="https://lin.ee/V7q3Osgm" target="_blank">
+        <div class="contact-link-icon">
+          <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.02 2 11c0 3.07 1.6 5.79 4.07 7.54L5 21l3.12-1.54C9.3 19.79 10.62 20 12 20c5.52 0 10-4.02 10-9S17.52 2 12 2z"/><path d="M8 10h8M8 13h5"/></svg>
+        </div>
+        <div class="contact-link-text">
+          <span class="contact-link-title">官方 LINE 預約</span>
+          <span class="contact-link-sub">LINE OFFICIAL ACCOUNT</span>
+        </div>
+        <span class="contact-link-arrow">›</span>
+      </a>
+      <a class="contact-link-item" href="https://www.instagram.com/xuri__barbershop" target="_blank">
+        <div class="contact-link-icon">
+          <svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4.5"/><circle cx="17.5" cy="6.5" r="1" fill="var(--gold-dark)" stroke="none"/></svg>
+        </div>
+        <div class="contact-link-text">
+          <span class="contact-link-title">Instagram</span>
+          <span class="contact-link-sub">@XURI__BARBERSHOP</span>
+        </div>
+        <span class="contact-link-arrow">›</span>
+      </a>
+      <a class="contact-link-item" href="https://maps.app.goo.gl/7vLoHCYbV6r2HkfQ6" target="_blank">
+        <div class="contact-link-icon">
+          <svg viewBox="0 0 24 24"><path d="M12 2C8.69 2 6 4.69 6 8c0 5.25 6 14 6 14s6-8.75 6-14c0-3.31-2.69-6-6-6z"/><circle cx="12" cy="8" r="2"/></svg>
+        </div>
+        <div class="contact-link-text">
+          <span class="contact-link-title">Google Maps 導航</span>
+          <span class="contact-link-sub">台中市梧棲區文昌路310號</span>
+        </div>
+        <span class="contact-link-arrow">›</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- Barbers -->
+  <div class="barbers-section">
+    <div class="section-label">OUR BARBERS</div>
+    <div class="section-title">理髮師介紹</div>
+    <div class="section-divider"></div>
+
+    <div class="barber-card">
+      <div class="barber-avatar yujun">✂</div>
+      <div class="barber-role">HEAD BARBER · 店長</div>
+      <div class="barber-name">渝鈞</div>
+      <div class="barber-note">
+        全時段開放預約
+        <span class="barber-note-en">Available all day · Lunch break 13:00–14:00</span>
+      </div>
+    </div>
+
+    <div class="barber-card">
+      <div class="barber-avatar xien">✂</div>
+      <div class="barber-role">TRAINEE BARBER · 培訓理髮師</div>
+      <div class="barber-name">錫恩</div>
+      <div class="barber-note" id="xien-note">
+        <span style="display:inline-block;background:linear-gradient(135deg,#f0ebe0,#e8ddd0);border:1px solid var(--gold-light);border-radius:6px;padding:8px 12px;font-size:13px;color:var(--brown);line-height:1.8">
+          <strong style="color:var(--gold-dark);display:block;margin-bottom:2px">假日限定活動價</strong>
+          洗 ＋ 剪 ＋ 一般修容　$500
+          <span class="barber-note-en">Holiday Special · Wash + Cut + Shave $500</span>
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Services -->
+  <div class="service-section">
+    <div class="section-label">SERVICE MENU</div>
+    <div class="section-title">服務項目</div>
+    <div class="section-divider"></div>
+
+    <div id="summer-promo" class="special-promo" style="display:none">
+      <strong>錫恩 假日限定活動價</strong>
+      洗 ＋ 剪 ＋ 修容　$500
+    </div>
+
+    <div class="service-menu">
+      <div class="service-menu-header">
+        <h3>服務項目 SERVICE ITEMS</h3>
+      </div>
+
+      <div class="service-item-row">
+        <div class="service-item-info">
+          <div class="service-item-name-zh">理髮 ＋ 洗髮</div>
+          <div class="service-item-name-en">Haircut + Shampoo</div>
+          <div class="service-item-sub">
+            選擇理髮＋洗髮服務，即可享修容服務半價優惠<br>
+            首次體驗送一般修容
+          </div>
+        </div>
+        <div class="service-price">$600</div>
+      </div>
+
+      <div class="service-item-row">
+        <div class="service-item-info">
+          <div class="service-item-name-zh">精緻理髮</div>
+          <div class="service-item-name-en">Haircut</div>
+        </div>
+        <div class="service-price">$500</div>
+      </div>
+
+      <div class="service-item-row">
+        <div class="service-item-info">
+          <div class="service-item-name-zh">基本單色染髮</div>
+          <div class="service-item-name-en">Basic Hair Color</div>
+          <div class="service-item-sub">
+            含理髮、洗髮、一般修容、頭皮隔離<br>
+            特殊色價格另計，請洽官方討論
+          </div>
+        </div>
+        <div class="service-price">$1800</div>
+      </div>
+
+      <div class="service-item-row" style="opacity:0.55">
+        <div class="service-item-info">
+          <div class="service-item-name-zh">特殊色染髮</div>
+          <div class="service-item-name-en">Special Hair Color</div>
+          <div class="service-item-sub">預約請洽官方 · Please contact us directly</div>
+        </div>
+        <div class="service-price" style="font-size:12px;color:var(--text-light)">請洽官方</div>
+      </div>
+
+      <div class="service-item-row" style="opacity:0.55">
+        <div class="service-item-info">
+          <div class="service-item-name-zh">兒童理髮（12 歲以下）</div>
+          <div class="service-item-name-en">Children's Haircut (Under 12)</div>
+          <div class="service-item-sub">預約請洽官方 · Please contact us directly</div>
+        </div>
+        <div class="service-price" style="font-size:12px;color:var(--text-light)">請洽官方</div>
+      </div>
+
+      <div class="service-note">
+        <strong>精緻修容</strong>
+        <br>精緻修容 Royal Shave　$400
+        <br>角質軟化 ／ 剃除全臉汗毛、老廢角質 ／ 修眉 ／ 修鬚
+        <br><span style="font-family:'Cormorant Garamond',serif;font-size:12px;color:var(--text-light)">Hot Towel Softening / Razor Facial Shave / Eyebrows Trim / Beard Trim</span>
+        <br><br>一般修容 Regular Shave　$200
+        <br>剃除全臉汗毛、老廢角質 ／ 修眉
+        <br><span style="font-family:'Cormorant Garamond',serif;font-size:12px;color:var(--text-light)">Razor Facial Shave / Eyebrows Trim</span>
+      </div>
+    </div>
+
+    <div class="discount-note">
+      高中（含高中）以下　出示學生證可折抵 $100<br>
+      兒童理髮（國小以下）可再折抵 $200
+    </div>
+  </div>
+
+  <!-- Booking Form -->
+  <div class="booking-section">
+    <div class="section-label">ONLINE RESERVATION</div>
+    <div class="section-title">線上預約</div>
+    <div class="section-divider"></div>
+
+    <div id="booking-not-open" class="notice" style="display:none">
+      本月尚未開放預約，請稍後再試。<br>
+      <span class="notice-en">Booking for this month is not yet available. Please check back later.</span>
+    </div>
+
+    <div id="banned-notice" class="banned-notice">
+      您的電話號碼已累積取消 3 次，無法透過線上平台送出預約。<br>
+      請親臨現場預約，造成不便敬請見諒。<br>
+      <span style="font-family:'Cormorant Garamond',serif;font-size:12px;display:block;margin-top:4px">
+        This phone number has reached the cancellation limit. Please book in person.
+      </span>
+    </div>
+
+    <div class="notice" id="booking-notice">
+      預約時段以整點一小時為單位
+      <br><span class="notice-en">Appointments are booked in 1-hour slots on the hour.</span>
+    </div>
+
+    <div id="closed-dates-notice" class="notice"></div>
+
+    <div class="booking-card" id="booking-form-wrap">
+      <form id="booking-form" novalidate>
+
+        <!-- Barber -->
+        <div class="form-group" id="fg-barber">
+          <label class="form-label">選擇理髮師 <span class="req">*</span></label>
+          <span class="form-label-en">SELECT BARBER</span>
+          <select class="form-select" id="sel-barber" onchange="onBarberChange()">
+            <option value="">— 請選擇 / Please select —</option>
+            <option value="yujun">渝鈞（店長 · Head Barber）</option>
+            <option value="xien">錫恩（培訓理髮師 · Trainee Barber）</option>
+          </select>
+          <div class="field-error">請選擇理髮師 · Please select a barber</div>
+        </div>
+
+        <!-- Service -->
+        <div class="form-group" id="fg-service">
+          <label class="form-label">選擇服務 <span class="req">*</span></label>
+          <span class="form-label-en">SELECT SERVICE</span>
+          <select class="form-select" id="sel-service" onchange="onServiceChange()">
+            <option value="">— 請選擇 / Please select —</option>
+          </select>
+          <div class="field-error">請選擇服務項目 · Please select a service</div>
+        </div>
+
+        <!-- Date -->
+        <div class="form-group" id="fg-date">
+          <label class="form-label">選擇日期 <span class="req">*</span></label>
+          <span class="form-label-en">SELECT DATE</span>
+          <div class="calendar-wrapper">
+            <div class="cal-header">
+              <button type="button" class="cal-nav-btn" onclick="prevMonth()">‹</button>
+              <div class="cal-month-title" id="cal-title"></div>
+              <button type="button" class="cal-nav-btn" onclick="nextMonth()">›</button>
+            </div>
+            <div class="cal-weekdays">
+              <div class="cal-weekday">日</div><div class="cal-weekday">一</div>
+              <div class="cal-weekday">二</div><div class="cal-weekday">三</div>
+              <div class="cal-weekday">四</div><div class="cal-weekday">五</div>
+              <div class="cal-weekday">六</div>
+            </div>
+            <div class="cal-days" id="cal-days"></div>
+          </div>
+          <div class="field-error">請選擇日期 · Please select a date</div>
+        </div>
+
+        <!-- Time -->
+        <div class="form-group" id="fg-time" style="display:none">
+          <label class="form-label">選擇時段 <span class="req">*</span></label>
+          <span class="form-label-en">SELECT TIME SLOT</span>
+          <div class="time-slots-wrapper">
+            <div class="time-slots-title">AVAILABLE SLOTS</div>
+            <div class="time-slots-grid" id="time-slots"></div>
+          </div>
+          <div class="field-error">請選擇時段 · Please select a time slot</div>
+        </div>
+
+        <!-- Name -->
+        <div class="form-group" id="fg-name">
+          <label class="form-label">姓氏 <span class="req">*</span></label>
+          <span class="form-label-en">LAST NAME · TITLE</span>
+          <div class="name-row">
+            <select class="form-select" id="sel-title">
+              <option value="先生">先生 / Mr.</option>
+              <option value="小姐">小姐 / Ms.</option>
+            </select>
+            <input class="form-input" type="text" id="inp-name" placeholder="請輸入姓氏">
+          </div>
+          <div class="field-error">請填寫姓氏 · Please enter your last name</div>
+        </div>
+
+        <!-- Phone -->
+        <div class="form-group" id="fg-phone">
+          <label class="form-label">手機號碼 <span class="req">*</span></label>
+          <span class="form-label-en">PHONE NUMBER</span>
+          <input class="form-input" type="tel" id="inp-phone" placeholder="09xxxxxxxx" maxlength="10" oninput="checkPhone()">
+          <div class="field-error" id="phone-error">請填寫完整09開頭的10碼手機號碼 · Please enter a valid 10-digit number starting with 09</div>
+        </div>
+
+        <!-- Notes -->
+        <div class="form-group" id="fg-notes">
+          <label class="form-label">備註</label>
+          <span class="form-label-en">NOTES (OPTIONAL)</span>
+          <textarea class="form-textarea" id="inp-notes" placeholder="如有特殊需求請於此說明 · Any special requests..."></textarea>
+        </div>
+
+        <button type="button" class="submit-btn" onclick="submitForm()">
+          確認預約 · Confirm Booking
+        </button>
+      </form>
+    </div>
+
+    <!-- Success -->
+    <div class="success-box" id="success-box">
+      <div class="success-icon">✓</div>
+      <div class="success-title">預約成功</div>
+      <span class="success-title-en">BOOKING CONFIRMED</span>
+      <div class="success-info" id="success-info"></div>
+      <div class="screenshot-note">
+        請截圖儲存預約資訊，並傳送至官方 LINE 以確保預約。
+        <br><span style="font-family:'Cormorant Garamond',serif;font-size:12px">Please screenshot and send to our LINE.</span>
+      </div>
+      <a href="https://lin.ee/V7q3Osgm" target="_blank" class="line-link-btn">傳送至官方 LINE</a>
+      <br>
+      <button type="button" class="gcal-btn" onclick="addToGoogleCalendar()">
+        加入 Google 日曆 · Add to Google Calendar
+      </button>
+      <button type="button" class="gcal-btn" style="margin-top:8px" onclick="resetForm()">
+        再次預約 · Book Again
+      </button>
+    </div>
+  </div>
+
+</main>
+
+<!-- Confirm Modal -->
+<div class="modal-overlay" id="confirm-modal">
+  <div class="modal-box">
+    <div class="modal-title">確認預約資訊</div>
+    <span class="modal-title-en">PLEASE CONFIRM YOUR BOOKING</span>
+    <div id="modal-confirm-rows"></div>
+    <div class="modal-actions">
+      <button class="modal-btn cancel-btn" onclick="closeModal()">返回修改<br><small>Go Back</small></button>
+      <button class="modal-btn confirm-btn" onclick="finalConfirm()">確認送出<br><small>Confirm</small></button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── FIREBASE CONFIG ──
+const FIREBASE_CONFIG = {
+  apiKey: "AIzaSyDS2oe-7G3Y_1zjEKfaX60MYLSE48J22u4",
+  authDomain: "xuri-barber-shop-274e1.firebaseapp.com",
+  projectId: "xuri-barber-shop-274e1",
+  storageBucket: "xuri-barber-shop-274e1.firebasestorage.app",
+  messagingSenderId: "353337881580",
+  appId: "1:353337881580:web:c9642f85646f006c73c6c9"
+};
+
+// ── IN-MEMORY CACHE (synced from Firebase) ──
+let _bookings = [];
+let _holidays = {};
+let _cancels = {};
+let _firebaseReady = false;
+let _db = null;
+
+// Firebase SDK loaded via CDN
+async function initFirebase() {
+  try {
+    const { initializeApp } = await import('https://www.gstatic.com/firebasejs/12.14.0/firebase-app.js');
+    const { getFirestore, doc, getDoc, setDoc, onSnapshot, collection } =
+      await import('https://www.gstatic.com/firebasejs/12.14.0/firebase-firestore.js');
+    const app = initializeApp(FIREBASE_CONFIG);
+    _db = getFirestore(app);
+    _firebaseReady = true;
+
+    // Load static data once
+    const holSnap = await getDoc(doc(_db, 'config', 'holidays'));
+    if (holSnap.exists()) _holidays = holSnap.data().data || {};
+
+    const canSnap = await getDoc(doc(_db, 'config', 'cancels'));
+    if (canSnap.exists()) _cancels = canSnap.data().data || {};
+
+    // Real-time listener for bookings
+    onSnapshot(collection(_db, 'bookings'), (snap) => {
+      _bookings = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      // Re-render calendar/slots if date is selected
+      if (selectedDate) {
+        const d = new Date(selectedDate + 'T00:00:00');
+        renderTimeSlots(d.getDay());
+      }
+      renderCalendar();
+    });
+
+    return true;
+  } catch(e) {
+    console.error('Firebase init failed, falling back to localStorage', e);
+    _holidays = getData('xuri_holidays', {});
+    _cancels = getData('xuri_cancels', {});
+    _bookings = getData('xuri_bookings', []);
+    return false;
+  }
+}
+
+// ── LOCAL FALLBACK ──
+function getData(key, def) {
+  try { const v = localStorage.getItem(key); return v ? JSON.parse(v) : def; } catch { return def; }
+}
+function setData(key, val) {
+  try { localStorage.setItem(key, JSON.stringify(val)); } catch {}
+}
+
+// ── DATA ACCESS (sync reads from cache) ──
+function getBookings() { return _bookings; }
+function getHolidays() { return _holidays; }
+function getCancels()  { return _cancels; }
+
+async function saveBookings(bArr) {
+  _bookings = bArr;
+  if (_firebaseReady && _db) {
+    const { doc, setDoc, deleteDoc, collection } =
+      await import('https://www.gstatic.com/firebasejs/12.14.0/firebase-firestore.js');
+    // Save each booking as its own doc
+    for (const b of bArr) {
+      await setDoc(doc(_db, 'bookings', b.id), b);
+    }
+  } else {
+    setData('xuri_bookings', bArr);
+  }
+}
+
+async function saveCancels(c) {
+  _cancels = c;
+  if (_firebaseReady && _db) {
+    const { doc, setDoc } = await import('https://www.gstatic.com/firebasejs/12.14.0/firebase-firestore.js');
+    await setDoc(doc(_db, 'config', 'cancels'), { data: c });
+  } else {
+    setData('xuri_cancels', c);
+  }
+}
+
+// Add a single booking document
+async function addBookingDoc(booking) {
+  if (_firebaseReady && _db) {
+    const { doc, setDoc } = await import('https://www.gstatic.com/firebasejs/12.14.0/firebase-firestore.js');
+    await setDoc(doc(_db, 'bookings', booking.id), booking);
+  } else {
+    const bk = getData('xuri_bookings', []);
+    bk.push(booking);
+    setData('xuri_bookings', bk);
+    _bookings = bk;
+  }
+}
+
+// ── OPERATING HOURS ──
+const HOURS_BY_DAY = { 0:[10,11,12,13,14,15,16,17,18,19], 1:[10,11,12,13,14,15,16,17,18,19], 2:[10,11,12,13,14,15,16,17,18,19,20], 3:[10,11,12,13,14,15,16,17,18,19], 4:[10,11,12,13,14,15,16,17,18,19,20], 5:[10,11,12,13,14,15,16,17,18,19,20], 6:[10,11,12,13,14,15,16,17,18,19,20] };
+// Mon-Wed-Sun close 20:00 => last slot 19:00; Tue Thu Fri Sat close 21:00 => last 20:00
+// day: 0=Sun,1=Mon,2=Tue,3=Wed,4=Thu,5=Fri,6=Sat
+function getSlotsForDay(dow) {
+  if(dow===0||dow===1||dow===3) return [10,11,12,14,15,16,17,18,19]; // skip 13
+  return [10,11,12,14,15,16,17,18,19,20]; // skip 13
+}
+
+// ── SERVICES ──
+function getServices(barber, month) {
+  if(barber === 'xien') {
+    return [
+      { id:'wash-cut-shave', label:'洗＋剪＋修容', en:'Wash + Cut + Shave', price:500, slots:1 },
+      { id:'basic-color', label:'基本單色染髮', en:'Basic Hair Color', price:1800, slots:2 },
+      { id:'special-color', label:'特殊色染髮（預約請洽官方）', en:'Special Color (Contact Us)', price:null, disabled:true },
+      { id:'children', label:'兒童理髮（預約請洽官方）', en:"Children's Haircut (Contact Us)", price:null, disabled:true },
+    ];
+  }
+  return [
+    { id:'haircut-shampoo', label:'理髮＋洗髮', en:'Haircut + Shampoo', price:600, slots:1 },
+    { id:'haircut', label:'精緻理髮', en:'Haircut', price:500, slots:1 },
+    { id:'basic-color', label:'基本單色染髮', en:'Basic Hair Color', price:1800, slots:2 },
+    { id:'special-color', label:'特殊色染髮（預約請洽官方）', en:'Special Color (Contact Us)', price:null, disabled:true },
+    { id:'children', label:'兒童理髮（預約請洽官方）', en:"Children's Haircut (Contact Us)", price:null, disabled:true },
+  ];
+}
+
+// ── CALENDAR STATE ──
+let calYear, calMonth, selectedDate = null, selectedTime = null;
+const today = new Date();
+calYear = today.getFullYear();
+calMonth = today.getMonth();
+
+function initCalendar() { renderCalendar(); updateClosedDatesNotice(); }
+
+function renderCalendar() {
+  const monthNames = ['一月','二月','三月','四月','五月','六月','七月','八月','九月','十月','十一月','十二月'];
+  document.getElementById('cal-title').textContent = calYear + ' 年 ' + monthNames[calMonth];
+  const container = document.getElementById('cal-days');
+  container.innerHTML = '';
+  const firstDay = new Date(calYear, calMonth, 1).getDay();
+  const daysInMonth = new Date(calYear, calMonth+1, 0).getDate();
+  const holidays = getHolidays();
+  const barber = document.getElementById('sel-barber').value;
+
+  // Check if month is open
+  const monthKey = calYear + '-' + String(calMonth+1).padStart(2,'0');
+  const monthHolidays = holidays[monthKey] || null;
+
+  for(let i=0; i<firstDay; i++) {
+    const el = document.createElement('div');
+    el.className = 'cal-day empty';
+    container.appendChild(el);
+  }
+
+  for(let d=1; d<=daysInMonth; d++) {
+    const el = document.createElement('div');
+    el.className = 'cal-day';
+    el.textContent = d;
+    const date = new Date(calYear, calMonth, d);
+    const isPast = date < new Date(today.getFullYear(), today.getMonth(), today.getDate());
+    const dateStr = calYear + '-' + String(calMonth+1).padStart(2,'0') + '-' + String(d).padStart(2,'0');
+    const isToday = date.toDateString() === today.toDateString();
+    if(isToday) el.classList.add('today');
+
+    let closed = false;
+    if(isPast) closed = true;
+    if(monthHolidays === null && !isPast) closed = true; // month not open yet
+
+    // Barber-specific holidays
+    if(barber && monthHolidays) {
+      const barberHols = (monthHolidays[barber] || []);
+      if(barberHols.includes(d)) closed = true;
+    }
+
+    if(closed) {
+      el.classList.add('closed');
+    } else {
+      el.onclick = () => selectDate(d, dateStr, date.getDay());
+    }
+
+    if(dateStr === selectedDate) el.classList.add('selected');
+    container.appendChild(el);
+  }
+}
+
+function selectDate(d, dateStr, dow) {
+  selectedDate = dateStr;
+  selectedTime = null;
+  renderCalendar();
+  renderTimeSlots(dow);
+  document.getElementById('fg-time').style.display = 'block';
+}
+
+function renderTimeSlots(dow) {
+  const barber = document.getElementById('sel-barber').value;
+  const serviceId = document.getElementById('sel-service').value;
+  const service = getServices(barber, calMonth).find(s => s.id === serviceId);
+  const need = (service && service.slots) ? service.slots : 1;
+  const slots = getSlotsForDay(dow); // already excludes 13
+  const bookings = getBookings();
+  const container = document.getElementById('time-slots');
+  container.innerHTML = '';
+
+  // Build booked set — mark all N hours of each existing booking
+  const booked = new Set();
+  bookings.forEach(b => {
+    if(b.date === selectedDate && b.barber === barber && b.status !== 'cancelled') {
+      const n = b.slots || 1;
+      for(let i = 0; i < n; i++) booked.add(b.hour + i);
+    }
+  });
+
+  slots.forEach(h => {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'time-slot-btn';
+    btn.textContent = String(h).padStart(2,'0') + ':00';
+
+    // Check N consecutive free slots — must all exist in slots array (no crossing 13:00 lunch break)
+    let canFit = true;
+    for(let i = 0; i < need; i++) {
+      const checkH = h + i;
+      // Explicit lunch-break wall: hour 13 is never allowed on booking platform
+      if(checkH === 13 || booked.has(checkH) || !slots.includes(checkH)) {
+        canFit = false; break;
+      }
+    }
+
+    if(!canFit) {
+      btn.classList.add('taken');
+    } else {
+      btn.onclick = () => selectTime(h, btn);
+    }
+    container.appendChild(btn);
+  });
+}
+
+function selectTime(h, btn) {
+  selectedTime = h;
+  document.querySelectorAll('.time-slot-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+}
+
+function prevMonth() {
+  calMonth--;
+  if(calMonth < 0) { calMonth = 11; calYear--; }
+  selectedDate = null; selectedTime = null;
+  document.getElementById('fg-time').style.display = 'none';
+  renderCalendar(); updateClosedDatesNotice();
+}
+function nextMonth() {
+  calMonth++;
+  if(calMonth > 11) { calMonth = 0; calYear++; }
+  selectedDate = null; selectedTime = null;
+  document.getElementById('fg-time').style.display = 'none';
+  renderCalendar(); updateClosedDatesNotice();
+}
+
+function updateClosedDatesNotice() {
+  const holidays = getHolidays();
+  const monthKey = calYear + '-' + String(calMonth+1).padStart(2,'0');
+  const monthHolidays = holidays[monthKey];
+  const barber = document.getElementById('sel-barber').value;
+  const el = document.getElementById('closed-dates-notice');
+  if(!monthHolidays) {
+    el.innerHTML = '本月尚未開放預約<br><span class="notice-en">Bookings for this month are not yet open.</span>';
+    el.style.display = 'block';
+    return;
+  }
+  el.style.display = 'none';
+}
+
+function onBarberChange() {
+  selectedDate = null; selectedTime = null;
+  document.getElementById('fg-time').style.display = 'none';
+  populateServices();
+  renderCalendar(); updateClosedDatesNotice();
+  const barber = document.getElementById('sel-barber').value;
+  document.getElementById('summer-promo').style.display = (barber === 'xien') ? 'block' : 'none';
+}
+
+function onServiceChange() {
+  selectedDate = null; selectedTime = null;
+  document.getElementById('fg-time').style.display = 'none';
+  renderCalendar();
+}
+
+function populateServices() {
+  const barber = document.getElementById('sel-barber').value;
+  const sel = document.getElementById('sel-service');
+  sel.innerHTML = '<option value="">— 請選擇 / Please select —</option>';
+  if(!barber) return;
+  const services = getServices(barber, calMonth);
+  services.forEach(s => {
+    const opt = document.createElement('option');
+    opt.value = s.id;
+    opt.textContent = s.label + (s.price ? '　$' + s.price : '');
+    if(s.disabled) opt.disabled = true;
+    sel.appendChild(opt);
+  });
+}
+
+// ── PHONE CHECK ──
+function checkPhone() {
+  const phone = document.getElementById('inp-phone').value;
+  const banned = getCancels();
+  const count = (banned[phone] || {}).count || 0;
+  const bannedNotice = document.getElementById('banned-notice');
+  if(count >= 3) {
+    bannedNotice.style.display = 'block';
+  } else {
+    bannedNotice.style.display = 'none';
+  }
+  // Warn at 2+
+  if(count >= 2 && count < 3) {
+    document.getElementById('phone-error').textContent = '注意：此號碼已累積 ' + count + ' 次取消紀錄。再取消一次將無法線上預約。';
+    document.getElementById('fg-phone').classList.add('has-error');
+    document.getElementById('fg-phone').classList.remove('has-error');
+  }
+}
+
+// ── VALIDATION & SUBMIT ──
+function validateField(id, condition) {
+  const el = document.getElementById(id);
+  if(!el) return condition;
+  if(condition) { el.classList.remove('has-error'); } else { el.classList.add('has-error'); }
+  return condition;
+}
+
+function submitForm() {
+  const barber = document.getElementById('sel-barber').value;
+  const serviceId = document.getElementById('sel-service').value;
+  const name = document.getElementById('inp-name').value.trim();
+  const title = document.getElementById('sel-title').value;
+  const phone = document.getElementById('inp-phone').value.trim();
+
+  let ok = true;
+  ok = validateField('fg-barber', !!barber) && ok;
+  ok = validateField('fg-service', !!serviceId) && ok;
+  ok = validateField('fg-date', !!selectedDate) && ok;
+  ok = validateField('fg-time', selectedTime !== null) && ok;
+  ok = validateField('fg-name', !!name) && ok;
+
+  const phoneOk = /^09\d{8}$/.test(phone);
+  document.getElementById('phone-error').textContent = phoneOk ? '' : '請填寫完整09開頭的10碼手機號碼 · Please enter a valid 10-digit number';
+  ok = validateField('fg-phone', phoneOk) && ok;
+
+  // Check ban
+  const cancels = getCancels();
+  const cancelCount = (cancels[phone] || {}).count || 0;
+  if(cancelCount >= 3) { document.getElementById('banned-notice').style.display='block'; return; }
+
+  if(!ok) return;
+
+  // Show confirm modal
+  const services = getServices(barber, calMonth);
+  const service = services.find(s => s.id === serviceId);
+  const barberLabel = barber === 'yujun' ? '渝鈞' : '錫恩';
+  const timeLabel = String(selectedTime).padStart(2,'0')+':00' + (service.slots===2 ? ' – ' + String(selectedTime+2).padStart(2,'0')+':00' : ' – ' + String(selectedTime+1).padStart(2,'0')+':00');
+
+  const rows = [
+    ['理髮師', barberLabel],
+    ['服務項目', service.label],
+    ['日期', selectedDate],
+    ['時段', timeLabel],
+    ['姓氏', name + ' ' + title],
+    ['電話', phone],
+  ];
+  const notes = document.getElementById('inp-notes').value.trim();
+  if(notes) rows.push(['備註', notes]);
+
+  const container = document.getElementById('modal-confirm-rows');
+  container.innerHTML = rows.map(([k,v]) => `<div class="confirm-row"><span class="confirm-key">${k}</span><span class="confirm-val">${v}</span></div>`).join('');
+  document.getElementById('confirm-modal').classList.add('active');
+
+  // Store temp
+  window._bookingTemp = { barber, barberLabel, serviceId, service, name, title, phone, notes, timeLabel };
+}
+
+function closeModal() {
+  document.getElementById('confirm-modal').classList.remove('active');
+}
+
+async function finalConfirm() {
+  const t = window._bookingTemp;
+  const newBooking = {
+    id: 'BK' + Date.now(),
+    barber: t.barber,
+    barberLabel: t.barberLabel,
+    serviceId: t.serviceId,
+    serviceLabel: t.service.label,
+    price: t.service.price,
+    slots: t.service.slots||1,
+    date: selectedDate,
+    hour: selectedTime,
+    name: t.name,
+    title: t.title,
+    phone: t.phone,
+    notes: t.notes,
+    status: 'confirmed',
+    createdAt: new Date().toISOString(),
+    source: 'online',
+    type: 'designated'
+  };
+  await addBookingDoc(newBooking);
+  closeModal();
+  showSuccess(newBooking, t);
+}
+
+function showSuccess(b, t) {
+  document.getElementById('booking-form-wrap').style.display = 'none';
+  const box = document.getElementById('success-box');
+  box.style.display = 'block';
+  const timeEnd = String(b.hour + b.slots).padStart(2,'0') + ':00';
+  const timeFmt = String(b.hour).padStart(2,'0') + ':00 – ' + timeEnd;
+  box.querySelector('#success-info').innerHTML = `
+    <strong>${b.name} ${b.title}</strong> 您好<br>
+    理髮師：${b.barberLabel}<br>
+    服務項目：${b.serviceLabel}<br>
+    預約日期：${b.date}<br>
+    預約時段：${timeFmt}<br>
+    聯絡電話：${b.phone}
+  `;
+  window._lastBooking = b;
+}
+
+function addToGoogleCalendar() {
+  const b = window._lastBooking;
+  if(!b) return;
+  const [y,m,d] = b.date.split('-').map(Number);
+  const startH = b.hour;
+  const endH = b.hour + b.slots;
+  const fmt = n => String(n).padStart(2,'0');
+  const dtStart = `${y}${fmt(m)}${fmt(d)}T${fmt(startH)}0000`;
+  const dtEnd   = `${y}${fmt(m)}${fmt(d)}T${fmt(endH)}0000`;
+  const text = encodeURIComponent('汿日理髮廳 預約 – ' + b.serviceLabel);
+  const loc  = encodeURIComponent('台中市梧棲區文昌路310號');
+  const url = `https://www.google.com/calendar/render?action=TEMPLATE&text=${text}&dates=${dtStart}/${dtEnd}&location=${loc}`;
+  window.open(url, '_blank');
+}
+
+function resetForm() {
+  document.getElementById('booking-form-wrap').style.display = 'block';
+  document.getElementById('success-box').style.display = 'none';
+  document.getElementById('booking-form').reset();
+  selectedDate = null; selectedTime = null;
+  renderCalendar();
+  document.getElementById('fg-time').style.display = 'none';
+}
+
+// ── INIT ──
+// Seed default holidays (June 2026) if not set
+(function seedHolidays(){
+  const h = getHolidays();
+  const key = '2026-06';
+  if(!h[key]) {
+    h[key] = {
+      yujun: [3,9,17,25],
+      xien:  [1,2,3,4,5,8,9,10,11,12,15,16,17,18,19,20,21,22,23,24,25,26,29,30]
+    };
+    setData('xuri_holidays', h);
+  }
+})();
+
+// ── INIT ──
+(async function seedAndInit(){
+  // Seed default holidays if Firebase not ready yet
+  initCalendar();
+  populateServices();
+  // Init Firebase in background, UI updates via real-time listener
+  await initFirebase();
+  // Refresh calendar after Firebase loads
+  renderCalendar();
+  updateClosedDatesNotice();
+})();
+</script>
+<script>
+(function(){
+  try {
+    var l = document.createElement('link');
+    l.rel = 'stylesheet';
+    l.href = 'https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@300;400;500;600;700&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Noto+Sans+TC:wght@300;400;500&display=swap';
+    document.head.appendChild(l);
+  } catch(e){}
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,2696 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>汿日理髮廳 · 後台管理</title>
+<style>
+/* Fonts loaded via JS below to avoid Script error on file:// */
+
+:root {
+  --cream: #f5f0e8;
+  --cream-dark: #ede7d9;
+  --warm-white: #faf8f4;
+  --gold: #b8945a;
+  --gold-light: #d4ae78;
+  --gold-dark: #8a6b3a;
+  --brown: #5c3d2e;
+  --brown-light: #8b6550;
+  --text-dark: #2c1f14;
+  --text-mid: #5a4030;
+  --text-light: #8a7060;
+  --border: #ddd5c5;
+  --shadow: rgba(92,61,46,0.12);
+  --yujun: #c9b0b0;
+  --yujun-dark: #a08080;
+  --xien: #8aa4b8;
+  --xien-dark: #5a7a94;
+  --green: #4a9068;
+  --red: #b84040;
+  --sidebar-w: 220px;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  font-family: 'Noto Serif TC', serif;
+  background: var(--warm-white);
+  color: var(--text-dark);
+  display: flex;
+  min-height: 100vh;
+}
+
+/* ─── LOGIN ─── */
+#login-screen {
+  position: fixed; inset:0; background:var(--cream);
+  display:flex; align-items:center; justify-content:center;
+  z-index: 9999;
+}
+.login-box {
+  background: var(--warm-white);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 40px 32px;
+  max-width: 360px;
+  width: 100%;
+  text-align: center;
+}
+.login-logo { font-size: 28px; font-weight: 700; letter-spacing: 2px; margin-bottom: 6px; }
+.login-sub { font-family:'Cormorant Garamond',serif; font-size:12px; letter-spacing:4px; color:var(--text-light); margin-bottom:28px; }
+.login-input {
+  width:100%; padding:12px 14px; border:1px solid var(--border); border-radius:8px;
+  font-family:'Noto Serif TC',serif; font-size:14px; background:var(--cream); margin-bottom:14px;
+}
+.login-btn {
+  width:100%; padding:14px; background:var(--brown); color:var(--cream);
+  border:none; border-radius:8px; font-family:'Noto Serif TC',serif; font-size:15px;
+  font-weight:600; cursor:pointer; letter-spacing:2px;
+}
+.login-btn:hover { background:var(--gold-dark); }
+.login-error { color:#c0392b; font-size:13px; margin-top:8px; display:none; }
+
+/* ─── VERSION SELECTOR ─── */
+#version-screen {
+  position:fixed; inset:0; background:var(--cream);
+  display:flex; align-items:center; justify-content:center;
+  z-index:10000; flex-direction:column; gap:0;
+}
+.version-box {
+  background:var(--warm-white); border:1px solid var(--border);
+  border-radius:20px; padding:40px 32px; max-width:360px; width:90%;
+  text-align:center;
+}
+.version-logo { font-size:26px; font-weight:700; letter-spacing:2px; margin-bottom:4px; }
+.version-sub { font-family:'Cormorant Garamond',serif; font-size:11px; letter-spacing:4px; color:var(--text-light); margin-bottom:32px; }
+.version-title { font-size:14px; color:var(--text-mid); margin-bottom:20px; font-weight:600; }
+.version-btns { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+.version-btn {
+  padding:20px 12px; border-radius:14px; border:2px solid var(--border);
+  background:var(--cream); cursor:pointer; font-family:'Noto Serif TC',serif;
+  transition:all 0.2s; display:flex; flex-direction:column; align-items:center; gap:8px;
+}
+.version-btn:hover { border-color:var(--gold); background:var(--cream-dark); }
+.version-btn svg { width:32px; height:32px; stroke:var(--brown); fill:none; stroke-width:1.5; stroke-linecap:round; stroke-linejoin:round; }
+.version-btn-label { font-size:15px; font-weight:700; color:var(--text-dark); }
+.version-btn-sub { font-size:11px; color:var(--text-light); font-family:'Cormorant Garamond',serif; letter-spacing:1px; }
+
+/* ─── MOBILE MODE ─── */
+body.mobile-mode #sidebar { display:none; }
+body.mobile-mode #main-content { margin-left:0; padding:16px 14px 80px; max-width:100vw; }
+body.mobile-mode #bell-btn { top:12px; right:14px; width:36px; height:36px; }
+
+/* Bottom nav */
+#mobile-nav {
+  display:none; position:fixed; bottom:0; left:0; right:0;
+  background:var(--brown); z-index:300;
+  padding:0 0 env(safe-area-inset-bottom,0);
+}
+body.mobile-mode #mobile-nav { display:flex; }
+.mobile-nav-items {
+  display:grid; grid-template-columns:repeat(4,1fr); width:100%;
+}
+.mobile-nav-item {
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  padding:10px 4px 8px; cursor:pointer; gap:3px;
+  color:rgba(255,255,255,0.6); transition:color 0.15s; position:relative;
+}
+.mobile-nav-item.active { color:var(--gold-light); }
+.mobile-nav-item svg { width:20px; height:20px; stroke:currentColor; fill:none; stroke-width:1.8; stroke-linecap:round; }
+.mobile-nav-label { font-size:10px; letter-spacing:0.5px; }
+/* More menu overlay */
+#mobile-more-menu {
+  display:none; position:fixed; bottom:60px; left:0; right:0;
+  background:var(--brown); border-top:1px solid rgba(255,255,255,0.1);
+  z-index:299; padding:8px 0;
+}
+#mobile-more-menu.open { display:block; }
+.mobile-more-item {
+  display:flex; align-items:center; gap:12px;
+  padding:12px 24px; cursor:pointer; color:rgba(255,255,255,0.8);
+  font-size:14px; transition:background 0.15s;
+}
+.mobile-more-item:hover { background:rgba(255,255,255,0.08); }
+.mobile-more-item.active { color:var(--gold-light); }
+.mobile-more-item svg { width:18px; height:18px; stroke:currentColor; fill:none; stroke-width:1.8; stroke-linecap:round; }
+
+/* Mobile adjustments */
+body.mobile-mode .stats-grid { grid-template-columns:1fr 1fr; }
+body.mobile-mode .barber-stats { grid-template-columns:1fr; }
+body.mobile-mode .form-row.cols-2 { grid-template-columns:1fr; }
+body.mobile-mode .form-row.cols-3 { grid-template-columns:1fr; }
+body.mobile-mode .page-header.flex-between { flex-direction:column; gap:10px; align-items:flex-start; }
+body.mobile-mode .data-table { font-size:12px; }
+body.mobile-mode .data-table th, body.mobile-mode .data-table td { padding:8px 8px; }
+body.mobile-mode .cal-cell { min-height:52px; font-size:10px; }
+body.mobile-mode .cal-date { font-size:11px; }
+body.mobile-mode .card { padding:14px 10px; }
+body.mobile-mode #page-calendar .card { padding:12px 6px; overflow-x:hidden; }
+body.mobile-mode .cal-grid { gap:1px; }
+body.mobile-mode .cal-cell { padding:3px 2px; border-radius:4px; min-height:58px; }
+body.mobile-mode .cal-booking-chip { font-size:9px; padding:1px 3px; line-height:1.4; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:100%; }
+body.mobile-mode .modal-box { padding:20px 14px; border-radius:16px 16px 0 0; }
+#sidebar {
+  width: var(--sidebar-w);
+  background: var(--brown);
+  color: var(--cream);
+  position: fixed;
+  top:0; left:0; bottom:0;
+  display: flex; flex-direction: column;
+  z-index: 200;
+}
+.sidebar-logo {
+  padding: 24px 20px 18px;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+.sidebar-logo-main { font-size: 18px; font-weight:700; letter-spacing:2px; }
+.sidebar-logo-sub { font-family:'Cormorant Garamond',serif; font-size:10px; letter-spacing:3px; color:var(--gold-light); margin-top:2px; }
+.sidebar-nav { flex:1; padding: 12px 0; }
+.nav-item {
+  display: flex; align-items:center; gap:10px;
+  padding: 12px 20px; cursor:pointer;
+  font-size: 13px; color: rgba(255,255,255,0.75);
+  transition: all 0.15s; position:relative;
+}
+.nav-item:hover { background: rgba(255,255,255,0.08); color:white; }
+.nav-item.active { background: rgba(184,148,90,0.25); color:var(--gold-light); }
+.nav-item.active::before {
+  content:''; position:absolute; left:0; top:0; bottom:0;
+  width:3px; background:var(--gold-light);
+}
+.nav-badge {
+  margin-left:auto; background:var(--red); color:white;
+  font-size:10px; padding:2px 6px; border-radius:10px; min-width:18px; text-align:center;
+}
+.sidebar-footer {
+  padding: 16px 20px;
+  border-top: 1px solid rgba(255,255,255,0.1);
+  font-size: 12px; color: rgba(255,255,255,0.5);
+}
+
+/* ─── MAIN CONTENT ─── */
+#main-content {
+  margin-left: var(--sidebar-w);
+  flex:1; padding: 24px;
+  max-width: calc(100vw - var(--sidebar-w));
+}
+.page { display:none; }
+.page.active { display:block; }
+.page-header { margin-bottom: 24px; }
+.page-title { font-size: 22px; font-weight:700; color:var(--text-dark); }
+.page-subtitle { font-family:'Cormorant Garamond',serif; font-size:12px; letter-spacing:3px; color:var(--text-light); margin-top:2px; }
+
+/* ─── CARDS ─── */
+.card {
+  background:var(--cream); border:1px solid var(--border);
+  border-radius:14px; padding:20px; margin-bottom:16px;
+}
+.card-title {
+  font-size:13px; font-weight:600; color:var(--text-mid);
+  margin-bottom:14px; letter-spacing:1px;
+  display:flex; align-items:center; gap:8px;
+}
+.card-title .dot {
+  width:8px; height:8px; border-radius:50%;
+}
+
+/* ─── STATS GRID ─── */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 12px;
+  margin-bottom: 20px;
+}
+.stat-card {
+  background:var(--cream); border:1px solid var(--border);
+  border-radius:12px; padding:16px 14px;
+}
+.stat-label { font-size:11px; color:var(--text-light); letter-spacing:1px; margin-bottom:6px; }
+.stat-value { font-size:24px; font-weight:700; color:var(--text-dark); }
+.stat-value small { font-size:13px; font-weight:400; color:var(--text-light); }
+.stat-sub { font-size:12px; color:var(--text-light); margin-top:4px; }
+
+/* ─── BARBER STATS ─── */
+.barber-stats {
+  display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:16px;
+}
+.barber-stat-card {
+  border-radius:12px; padding:16px;
+  border: 2px solid transparent;
+}
+.barber-stat-card.yujun { background:#f7f0f0; border-color: var(--yujun); }
+.barber-stat-card.xien { background:#f0f4f7; border-color: var(--xien); }
+.barber-stat-name { font-size:16px; font-weight:700; margin-bottom:8px; }
+.barber-stat-row { display:flex; justify-content:space-between; font-size:12px; margin-bottom:3px; }
+.barber-stat-row .k { color:var(--text-light); }
+.barber-stat-row .v { font-weight:600; }
+
+/* ─── SCHEDULE TABLE ─── */
+.schedule-row {
+  display:grid; grid-template-columns: 60px 1fr auto;
+  gap:8px; align-items:start; padding:8px 0;
+  border-bottom:1px solid var(--border);
+}
+.schedule-row:last-child { border:none; }
+.schedule-time { font-size:13px; font-weight:600; color:var(--text-mid); padding-top:6px; }
+.schedule-slot {
+  border-radius:8px; padding:8px 10px; font-size:12px;
+  line-height:1.5; cursor:pointer;
+}
+.schedule-slot.yujun { background:#f7f0f0; border:1px solid var(--yujun); }
+.schedule-slot.xien  { background:#f0f4f7; border:1px solid var(--xien); }
+.schedule-slot.empty { background:var(--warm-white); border:1px dashed var(--border); color:var(--text-light); cursor:pointer; }
+.schedule-slot.empty:hover { background:var(--cream-dark); }
+.schedule-slot-name { font-weight:600; }
+.schedule-slot-svc  { color:var(--text-light); font-size:11px; }
+.schedule-edit-btn {
+  padding:6px 10px; border-radius:7px; border:1px solid var(--border);
+  background:var(--cream); cursor:pointer; font-size:12px;
+  font-family:'Noto Serif TC',serif; color:var(--text-mid);
+  white-space:nowrap; align-self:center;
+}
+.schedule-edit-btn:hover { background:var(--border); }
+body.mobile-mode .schedule-row { grid-template-columns: 50px 1fr auto; gap:6px; }
+
+/* ─── CALENDAR VIEW ─── */
+.cal-grid { display:grid; grid-template-columns:repeat(7,1fr); gap:2px; }
+.cal-hdr { text-align:center; font-size:11px; color:var(--text-light); padding:6px 0; }
+.cal-cell {
+  min-height:70px; border:1px solid var(--border); border-radius:6px;
+  padding:4px; font-size:11px; cursor:pointer; transition:background 0.15s;
+  background:var(--warm-white);
+}
+.cal-cell:hover { background:var(--cream); }
+.cal-cell.other-month { opacity:0.4; }
+.cal-cell.today-cell { border-color:var(--gold); }
+.cal-cell.closed-cell { background:#f8f5f0; }
+.cal-date { font-size:12px; font-weight:600; margin-bottom:3px; }
+.cal-booking-chip {
+  font-size:10px; padding:2px 4px; border-radius:4px;
+  margin-bottom:2px; line-height:1.3; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+}
+.cal-booking-chip.yujun { background:#f0e4e4; color:var(--yujun-dark); }
+.cal-booking-chip.xien  { background:#e4edf5; color:var(--xien-dark); }
+
+/* ─── TABLES ─── */
+.data-table { width:100%; border-collapse:collapse; font-size:13px; }
+.data-table th {
+  background:var(--cream-dark); color:var(--text-mid);
+  font-weight:600; padding:10px 12px; text-align:left;
+  border-bottom:1px solid var(--border); font-size:12px; letter-spacing:0.5px;
+}
+.data-table td {
+  padding:10px 12px; border-bottom:1px solid var(--border);
+  vertical-align:top;
+}
+.data-table tr:last-child td { border:none; }
+.data-table tr:hover td { background:var(--cream); }
+.badge {
+  display:inline-block; padding:2px 8px; border-radius:10px;
+  font-size:11px; font-weight:600;
+}
+.badge.confirmed { background:#e8f5ee; color:var(--green); }
+.badge.cancelled { background:#fde8e8; color:var(--red); }
+.badge.rebooked  { background:#e8eef8; color:#3a5a94; }
+/* ─── TAGS ─── */
+.booking-tag {
+  display:inline-block; padding:2px 9px; border-radius:20px; font-size:11px;
+  font-weight:600; letter-spacing:0.5px; border:1px solid;
+  white-space:nowrap; margin:1px 2px;
+}
+.tag-wrap { display:flex; flex-wrap:wrap; gap:2px; margin-top:3px; }
+.badge.yujun-b { background:#f0e4e4; color:var(--yujun-dark); }
+.badge.xien-b  { background:#e4edf5; color:var(--xien-dark); }
+.badge.designated { background:#f0ebe0; color:var(--gold-dark); }
+.badge.walkin { background:#e8f0e8; color:#3a703a; }
+
+/* ─── BUTTONS ─── */
+.btn {
+  padding:8px 16px; border-radius:8px; border:none; cursor:pointer;
+  font-family:'Noto Serif TC',serif; font-size:13px; font-weight:600;
+  transition: all 0.15s;
+}
+.btn-primary { background:var(--brown); color:var(--cream); }
+.btn-primary:hover { background:var(--gold-dark); }
+.btn-secondary { background:var(--cream-dark); color:var(--text-mid); border:1px solid var(--border); }
+.btn-secondary:hover { background:var(--border); }
+.btn-danger { background:#fde8e8; color:var(--red); border:1px solid #f0b8b8; }
+.btn-danger:hover { background:#f0b8b8; }
+.btn-sm { padding:4px 10px; font-size:12px; }
+.btn-green { background:#e8f5ee; color:var(--green); border:1px solid #b8ddc8; }
+.btn-green:hover { background:#b8ddc8; }
+
+/* ─── FORMS ─── */
+.form-row { display:grid; gap:12px; margin-bottom:14px; }
+.form-row.cols-2 { grid-template-columns:1fr 1fr; }
+.form-row.cols-3 { grid-template-columns:1fr 1fr 1fr; }
+.f-label { display:block; font-size:12px; color:var(--text-light); margin-bottom:4px; letter-spacing:1px; }
+.f-label span.req { color:var(--gold-dark); }
+.f-input, .f-select, .f-textarea {
+  width:100%; max-width:100%; padding:10px 12px; border:1px solid var(--border); border-radius:7px;
+  font-family:'Noto Serif TC',serif; font-size:13px; background:var(--warm-white);
+  color:var(--text-dark); box-sizing:border-box;
+}
+input[type="date"].f-input {
+  min-height:44px; display:block; -webkit-appearance:none; appearance:none;
+}
+.f-input:focus, .f-select:focus, .f-textarea:focus {
+  outline:none; border-color:var(--gold);
+  box-shadow:0 0 0 3px rgba(184,148,90,0.15);
+}
+.f-select {
+  appearance:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%238a6b3a' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat:no-repeat; background-position:right 12px center; padding-right:32px;
+}
+.f-textarea { min-height:70px; resize:vertical; }
+
+/* ─── MODAL ─── */
+.modal-overlay {
+  position:fixed; inset:0; background:rgba(44,31,20,0.6);
+  display:flex; align-items:flex-end; justify-content:center;
+  z-index:9990; padding:0; opacity:0; pointer-events:none; transition:opacity 0.2s;
+}
+.modal-overlay.active { opacity:1; pointer-events:all; }
+.modal-box {
+  background:var(--warm-white); border-radius:16px 16px 0 0; padding:28px 24px;
+  max-width:540px; width:100%; max-height:92vh; overflow-y:auto; overflow-x:hidden;
+  transform:translateY(40px); transition:transform 0.25s;
+}
+.modal-overlay.active .modal-box { transform:translateY(0); }
+.modal-header {
+  display:flex; align-items:center; justify-content:space-between; margin-bottom:18px;
+}
+.modal-title { font-size:17px; font-weight:700; }
+.modal-close { background:none; border:none; cursor:pointer; font-size:20px; color:var(--text-light); padding:4px; }
+.modal-close:hover { color:var(--text-dark); }
+.modal-footer { display:flex; gap:10px; margin-top:20px; justify-content:flex-end; }
+
+/* ─── BELL NOTIFICATION ─── */
+#bell-btn {
+  position: fixed;
+  top: 16px;
+  right: 20px;
+  z-index: 9000;
+  width: 42px; height: 42px;
+  border-radius: 50%;
+  background: var(--warm-white);
+  border: 1px solid var(--border);
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 2px 8px var(--shadow);
+  transition: background 0.15s;
+}
+#bell-btn:hover { background: var(--cream); }
+#bell-btn svg { width: 20px; height: 20px; stroke: var(--brown); fill: none; stroke-width: 1.8; stroke-linecap: round; }
+#bell-dot {
+  position: absolute;
+  top: 6px; right: 6px;
+  width: 9px; height: 9px;
+  border-radius: 50%;
+  background: var(--red);
+  border: 2px solid var(--warm-white);
+  display: none;
+}
+#bell-dot.show { display: block; }
+
+/* ─── NOTIF DRAWER ─── */
+#notif-drawer {
+  position: fixed;
+  top: 0; right: 0; bottom: 0;
+  width: 320px;
+  background: var(--warm-white);
+  border-left: 1px solid var(--border);
+  box-shadow: -4px 0 20px var(--shadow);
+  z-index: 8000;
+  display: flex; flex-direction: column;
+  transform: translateX(100%);
+  transition: transform 0.25s cubic-bezier(0.4,0,0.2,1);
+}
+#notif-drawer.open { transform: translateX(0); }
+.notif-drawer-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 18px 18px 14px;
+  border-bottom: 1px solid var(--border);
+  background: var(--cream);
+}
+.notif-drawer-title { font-size: 15px; font-weight: 700; }
+.notif-drawer-close {
+  background: none; border: none; cursor: pointer;
+  font-size: 20px; color: var(--text-light); padding: 4px;
+}
+.notif-drawer-close:hover { color: var(--text-dark); }
+.notif-drawer-body { flex: 1; overflow-y: auto; padding: 12px; }
+.notif-drawer-footer {
+  padding: 12px 18px;
+  border-top: 1px solid var(--border);
+  background: var(--cream);
+}
+.notif-item {
+  padding: 10px 12px; border-radius: 8px; margin-bottom: 6px;
+  background: var(--cream); border: 1px solid var(--border);
+  transition: background 0.1s;
+}
+.notif-item.unread { background: #fdf9ef; border-color: #e8d9b5; }
+.notif-item-time { font-size: 11px; color: var(--text-light); margin-bottom: 3px; }
+.notif-item-msg { font-size: 13px; line-height: 1.5; }
+#notif-drawer-overlay {
+  position: fixed; inset: 0;
+  background: rgba(44,31,20,0.3);
+  z-index: 7999;
+  display: none;
+}
+#notif-drawer-overlay.show { display: block; }
+
+/* ─── SEARCH ─── */
+.search-wrap { display:flex; gap:10px; margin-bottom:16px; }
+.search-input { flex:1; padding:10px 14px; border:1px solid var(--border); border-radius:8px; font-family:'Noto Serif TC',serif; font-size:13px; background:var(--cream); }
+
+/* ─── MISC ─── */
+.flex { display:flex; }
+.flex-between { display:flex; align-items:center; justify-content:space-between; }
+.gap-8 { gap:8px; }
+.mt-12 { margin-top:12px; }
+.mt-16 { margin-top:16px; }
+.copy-text {
+  background:var(--cream); border:1px solid var(--border); border-radius:8px;
+  padding:14px; font-size:13px; line-height:1.9; white-space:pre-wrap;
+  word-break:break-word;
+}
+.tabs {
+  display:flex; gap:4px; border-bottom:1px solid var(--border); margin-bottom:20px;
+}
+.tab-btn {
+  padding:8px 16px; border:none; background:none; cursor:pointer;
+  font-family:'Noto Serif TC',serif; font-size:13px; color:var(--text-light);
+  border-bottom:2px solid transparent; margin-bottom:-1px; transition:all 0.15s;
+}
+.tab-btn.active { color:var(--gold-dark); border-bottom-color:var(--gold-dark); font-weight:600; }
+.tab-content { display:none; }
+.tab-content.active { display:block; }
+.settle-who { display:flex; gap:10px; margin-bottom:14px; }
+.settle-btn {
+  flex:1; padding:14px; border-radius:10px; border:2px solid var(--border);
+  background:var(--cream); cursor:pointer; font-family:'Noto Serif TC',serif;
+  font-size:15px; font-weight:600; transition:all 0.15s;
+}
+.settle-btn:hover, .settle-btn.active { border-color:var(--gold-dark); background:var(--gold-light); color:white; }
+.month-selector { display:flex; gap:8px; align-items:center; margin-bottom:16px; }
+.day-nav { display:flex; align-items:center; gap:12px; margin-bottom:16px; }
+.day-nav-btn {
+  background:var(--cream-dark); border:1px solid var(--border); border-radius:6px;
+  padding:6px 12px; cursor:pointer; font-size:16px;
+}
+.day-nav-btn:hover { background:var(--border); }
+.day-nav-title { font-size:15px; font-weight:600; color:var(--text-dark); min-width:120px; text-align:center; }
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<!-- VERSION SELECTOR -->
+<div id="version-screen">
+  <div class="version-box">
+    <div class="version-logo">汿日理髮廳</div>
+    <div class="version-sub">ADMIN PANEL · 後台管理</div>
+    <div class="version-title">請選擇使用版本</div>
+    <div class="version-btns">
+      <button class="version-btn" onclick="selectVersion('desktop')">
+        <svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+        <span class="version-btn-label">電腦版</span>
+        <span class="version-btn-sub">DESKTOP</span>
+      </button>
+      <button class="version-btn" onclick="selectVersion('mobile')">
+        <svg viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="2"/><circle cx="12" cy="18" r="1" fill="var(--brown)" stroke="none"/></svg>
+        <span class="version-btn-label">手機版</span>
+        <span class="version-btn-sub">MOBILE</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- MOBILE BOTTOM NAV -->
+<div id="mobile-nav">
+  <div id="mobile-more-menu">
+    <div class="mobile-more-item" id="mm-bookings" onclick="showPage('bookings');closeMobileMore()">
+      <svg viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/></svg>
+      預約管理
+    </div>
+    <div class="mobile-more-item" id="mm-search" onclick="showPage('search');closeMobileMore()">
+      <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      客人查詢
+    </div>
+    <div class="mobile-more-item" id="mm-cancels" onclick="showPage('cancels');closeMobileMore()">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="m15 9-6 6M9 9l6 6"/></svg>
+      取消名單
+    </div>
+    <div class="mobile-more-item" id="mm-holidays" onclick="showPage('holidays');closeMobileMore()">
+      <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+      設定休假
+    </div>
+    <div class="mobile-more-item" id="mm-settle" onclick="showPage('settle');closeMobileMore()">
+      <svg viewBox="0 0 24 24"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+      當日結款
+    </div>
+  </div>
+  <div class="mobile-nav-items">
+    <div class="mobile-nav-item active" id="mn-overview" onclick="showPage('overview');closeMobileMore()">
+      <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+      <span class="mobile-nav-label">總覽</span>
+    </div>
+    <div class="mobile-nav-item" id="mn-calendar" onclick="showPage('calendar');closeMobileMore()">
+      <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+      <span class="mobile-nav-label">行事曆</span>
+    </div>
+    <div class="mobile-nav-item" id="mn-add" onclick="showPage('add-booking');closeMobileMore()">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v8M8 12h8"/></svg>
+      <span class="mobile-nav-label">新增</span>
+    </div>
+    <div class="mobile-nav-item" id="mn-more" onclick="toggleMobileMore()">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="1" fill="currentColor"/><circle cx="19" cy="12" r="1" fill="currentColor"/><circle cx="5" cy="12" r="1" fill="currentColor"/></svg>
+      <span class="mobile-nav-label">更多</span>
+    </div>
+  </div>
+</div>
+
+<div id="login-screen" style="display:none">
+  <div class="login-box">
+    <div class="login-logo">汿日理髮廳</div>
+    <div class="login-sub">ADMIN PANEL · 後台管理</div>
+    <input type="password" class="login-input" id="login-pw" placeholder="請輸入後台密碼" onkeydown="if(event.key==='Enter')doLogin()">
+    <button class="login-btn" onclick="doLogin()">登入 · Login</button>
+    <div class="login-error" id="login-error">密碼錯誤，請重新輸入。</div>
+  </div>
+</div>
+
+<!-- BELL + NOTIF DRAWER -->
+<div id="notif-drawer-overlay" onclick="closeNotifDrawer()"></div>
+<button id="bell-btn" onclick="toggleNotifDrawer()">
+  <svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+  <span id="bell-dot"></span>
+</button>
+
+<div id="notif-drawer">
+  <div class="notif-drawer-header">
+    <span class="notif-drawer-title">通知欄</span>
+    <button class="notif-drawer-close" onclick="closeNotifDrawer()">✕</button>
+  </div>
+  <div class="notif-drawer-body" id="notif-drawer-body">
+    <div style="color:var(--text-light);font-size:13px;padding:12px 0">無通知</div>
+  </div>
+  <div class="notif-drawer-footer">
+    <button class="btn btn-secondary btn-sm" style="width:100%" onclick="clearNotifs()">全部清除</button>
+  </div>
+</div>
+
+<!-- SIDEBAR -->
+<nav id="sidebar">
+  <div class="sidebar-logo">
+    <div class="sidebar-logo-main">汿日理髮廳</div>
+    <div class="sidebar-logo-sub">ADMIN PANEL</div>
+  </div>
+  <div class="sidebar-nav">
+    <div class="nav-item active" onclick="showPage('overview')">
+      <span>◈</span> 總覽
+    </div>
+    <div class="nav-item" onclick="showPage('calendar')">
+      <span>▦</span> 行事曆
+    </div>
+    <div class="nav-item" onclick="showPage('bookings')">
+      <span>≡</span> 預約管理
+    </div>
+    <div class="nav-item" onclick="showPage('add-booking')">
+      <span>＋</span> 新增預約
+    </div>
+    <div class="nav-item" onclick="showPage('search')">
+      <span>⊙</span> 客人查詢
+    </div>
+    <div class="nav-item" onclick="showPage('cancels')">
+      <span>✕</span> 取消名單
+    </div>
+    <div class="nav-item" onclick="showPage('holidays')">
+      <span>⊗</span> 設定休假
+    </div>
+    <div class="nav-item" onclick="showPage('settle')">
+      <span>$</span> 當日結款
+    </div>
+  </div>
+  <div class="sidebar-footer">
+    <div>後台版本 v2.0</div>
+    <button style="background:none;border:none;color:rgba(255,255,255,0.5);cursor:pointer;font-size:12px;margin-top:4px;padding:0" onclick="doLogout()">登出</button>
+  </div>
+</nav>
+
+<!-- MAIN CONTENT -->
+<div id="main-content">
+
+  <!-- OVERVIEW -->
+  <div class="page active" id="page-overview">
+    <div class="page-header flex-between">
+      <div>
+        <div class="page-title">總覽</div>
+        <div class="page-subtitle">OVERVIEW · <span id="today-str"></span></div>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center">
+        <button class="btn btn-secondary btn-sm" onclick="prevDay()">‹</button>
+        <span id="view-date-label" style="font-size:13px;font-weight:600;min-width:100px;text-align:center"></span>
+        <button class="btn btn-secondary btn-sm" onclick="nextDay()">›</button>
+        <button class="btn btn-secondary btn-sm" onclick="goToday()">今天</button>
+      </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats-grid" id="stats-grid"></div>
+
+    <!-- Barber stats -->
+    <div class="barber-stats" id="barber-stats-wrap"></div>
+
+    <!-- Today schedule -->
+    <div class="card" id="today-schedule-card">
+      <div class="card-title">
+        <span class="dot" style="background:var(--gold)"></span>
+        當日預約排程
+      </div>
+      <div id="today-schedule"></div>
+    </div>
+
+    <!-- Available slots today -->
+    <div class="card">
+      <div class="card-title">
+        <span class="dot" style="background:var(--green)"></span>
+        當日空檔（可點選立即預約）
+      </div>
+      <div id="today-slots-wrap"></div>
+    </div>
+  </div>
+
+  <!-- CALENDAR PAGE -->
+  <div class="page" id="page-calendar">
+    <div class="page-header flex-between">
+      <div>
+        <div class="page-title">行事曆</div>
+        <div class="page-subtitle">CALENDAR VIEW</div>
+      </div>
+      <div class="month-selector">
+        <button class="btn btn-secondary btn-sm" onclick="prevCalPage()">‹</button>
+        <span id="cal-page-title" style="min-width:110px;text-align:center;font-weight:600;font-size:14px"></span>
+        <button class="btn btn-secondary btn-sm" onclick="nextCalPage()">›</button>
+      </div>
+    </div>
+    <div class="card">
+      <div style="display:flex;gap:12px;margin-bottom:14px;font-size:12px">
+        <span style="display:flex;align-items:center;gap:4px"><span style="width:10px;height:10px;background:#f0e4e4;border-radius:50%;display:inline-block;border:1px solid var(--yujun)"></span>渝鈞</span>
+        <span style="display:flex;align-items:center;gap:4px"><span style="width:10px;height:10px;background:#e4edf5;border-radius:50%;display:inline-block;border:1px solid var(--xien)"></span>錫恩</span>
+      </div>
+      <div class="cal-grid">
+        <div class="cal-hdr">日</div><div class="cal-hdr">一</div><div class="cal-hdr">二</div>
+        <div class="cal-hdr">三</div><div class="cal-hdr">四</div><div class="cal-hdr">五</div><div class="cal-hdr">六</div>
+      </div>
+      <div class="cal-grid" id="cal-body"></div>
+    </div>
+  </div>
+
+  <!-- BOOKINGS PAGE -->
+  <div class="page" id="page-bookings">
+    <div class="page-header flex-between">
+      <div>
+        <div class="page-title">預約管理</div>
+        <div class="page-subtitle">BOOKINGS MANAGEMENT</div>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center">
+        <select class="f-select" id="bk-filter-month" style="width:160px" onchange="renderBookingsPage()">
+          <option value="">全部月份</option>
+        </select>
+        <select class="f-select" id="bk-filter-barber" style="width:120px" onchange="renderBookingsPage()">
+          <option value="">全部理髮師</option>
+          <option value="yujun">渝鈞</option>
+          <option value="xien">錫恩</option>
+        </select>
+      </div>
+    </div>
+    <div class="card">
+      <div id="bookings-table-wrap"></div>
+    </div>
+  </div>
+
+  <!-- ADD BOOKING -->
+  <div class="page" id="page-add-booking">
+    <div class="page-header">
+      <div class="page-title">新增預約</div>
+      <div class="page-subtitle">ADD BOOKING</div>
+    </div>
+    <div class="card" style="max-width:560px">
+      <div class="form-row cols-2">
+        <div>
+          <label class="f-label">客人類型 <span class="req">*</span></label>
+          <select class="f-select" id="ab-type">
+            <option value="designated">指定客</option>
+            <option value="walkin">散客</option>
+          </select>
+        </div>
+        <div>
+          <label class="f-label">理髮師 <span class="req">*</span></label>
+          <select class="f-select" id="ab-barber" onchange="abBarberChange()">
+            <option value="">請選擇</option>
+            <option value="yujun">渝鈞</option>
+            <option value="xien">錫恩</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row cols-2">
+        <div>
+          <label class="f-label">服務項目 <span class="req">*</span></label>
+          <select class="f-select" id="ab-service" onchange="abServiceChange()">
+            <option value="">請先選理髮師</option>
+          </select>
+        </div>
+        <div id="ab-special-price-wrap" style="display:none">
+          <label class="f-label">所需時數 <span class="req">*</span></label>
+          <select class="f-select" id="ab-special-hours" onchange="renderAbSlots()" style="margin-bottom:8px">
+            <option value="">請選擇時數</option>
+            <option value="1">1 小時</option>
+            <option value="2">2 小時</option>
+            <option value="3">3 小時</option>
+            <option value="4">4 小時</option>
+            <option value="5">5 小時</option>
+            <option value="6">6 小時</option>
+          </select>
+          <label class="f-label">特殊色價格</label>
+          <input class="f-input" type="number" id="ab-special-price" placeholder="選填，結款前需填入">
+          <div style="font-size:11px;color:var(--text-light);margin-top:3px">結款前需填入金額才可結款</div>
+        </div>
+        <div id="ab-children-price-wrap" style="display:none">
+          <label class="f-label">兒童理髮價格</label>
+          <input class="f-input" type="number" id="ab-children-price" placeholder="選填，結款前需填入">
+          <div style="font-size:11px;color:var(--text-light);margin-top:3px">結款前需填入金額才可結款</div>
+        </div>
+        <div id="ab-adult-child-price-wrap" style="display:none">
+          <label class="f-label">大人＋小孩 價格</label>
+          <input class="f-input" type="number" id="ab-adult-child-price" placeholder="選填，結款前需填入">
+          <div style="font-size:11px;color:var(--text-light);margin-top:3px">結款前需填入金額才可結款</div>
+        </div>
+      </div>
+      <div class="form-row">
+        <div>
+          <label class="f-label">日期 <span class="req">*</span></label>
+          <input class="f-input" type="date" id="ab-date" onchange="renderAbSlots()" style="min-height:46px;line-height:1.4">
+        </div>
+      </div>
+      <div class="form-row">
+        <div>
+          <label class="f-label">時段 <span class="req">*</span></label>
+          <select class="f-select" id="ab-time">
+            <option value="">請先選日期</option>
+          </select>
+          <div style="font-size:11px;color:var(--text-light);margin-top:4px">時段每5秒自動更新</div>
+        </div>
+      </div>
+      <div class="form-row cols-3">
+        <div>
+          <label class="f-label">稱謂</label>
+          <select class="f-select" id="ab-title">
+            <option value="先生">先生</option>
+            <option value="小姐">小姐</option>
+          </select>
+        </div>
+        <div style="grid-column:span 2">
+          <label class="f-label">姓氏 <span class="req">*</span></label>
+          <input class="f-input" type="text" id="ab-name" placeholder="姓氏">
+        </div>
+      </div>
+      <div class="form-row">
+        <div>
+          <label class="f-label">手機號碼 <span class="req">*</span></label>
+          <input class="f-input" type="tel" id="ab-phone" placeholder="09xxxxxxxx" maxlength="10" oninput="abCheckPhone()">
+          <div id="ab-phone-warn" style="font-size:12px;color:var(--red);margin-top:4px;display:none"></div>
+        </div>
+      </div>
+      <div class="form-row">
+        <div>
+          <label class="f-label">備註</label>
+          <textarea class="f-textarea" id="ab-notes" placeholder="備註說明..."></textarea>
+        </div>
+      </div>
+      <div class="form-row">
+        <div>
+          <label class="f-label">標籤</label>
+          <input class="f-input" type="text" id="ab-tags" placeholder="輸入標籤，以逗號分隔（例：VIP,首次來訪）">
+          <div style="font-size:11px;color:var(--text-light);margin-top:3px">標籤會顯示於總覽、預約清單等所有位置</div>
+        </div>
+      </div>
+      <div style="display:flex;gap:10px">
+        <button class="btn btn-primary" onclick="addBookingSubmit()">新增預約</button>
+        <button class="btn btn-secondary" onclick="abReset()">清除</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SEARCH -->
+  <div class="page" id="page-search">
+    <div class="page-header">
+      <div class="page-title">客人查詢</div>
+      <div class="page-subtitle">CUSTOMER SEARCH</div>
+    </div>
+    <div class="card">
+      <div class="search-wrap">
+        <input class="search-input" type="tel" id="search-phone" placeholder="輸入手機號碼搜尋" maxlength="10">
+        <button class="btn btn-primary" onclick="searchCustomer()">搜尋</button>
+      </div>
+      <div id="search-result"></div>
+    </div>
+  </div>
+
+  <!-- CANCELS PAGE -->
+  <div class="page" id="page-cancels">
+    <div class="page-header">
+      <div class="page-title">取消名單</div>
+      <div class="page-subtitle">CANCELLATION RECORDS</div>
+    </div>
+    <div class="card">
+      <div style="display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap;align-items:center">
+        <select class="f-select" id="cancel-filter-year" style="width:110px" onchange="renderCancelsPage()">
+          <option value="">全部年份</option>
+        </select>
+        <input class="search-input" type="tel" id="cancel-search-phone" placeholder="依電話號碼搜尋" style="flex:1;min-width:160px" oninput="renderCancelsPage()">
+        <button class="btn btn-secondary btn-sm" onclick="document.getElementById('cancel-search-phone').value='';document.getElementById('cancel-filter-year').value='';renderCancelsPage()">清除篩選</button>
+      </div>
+      <div id="cancels-list"></div>
+    </div>
+  </div>
+
+  <!-- HOLIDAYS -->
+  <div class="page" id="page-holidays">
+    <div class="page-header">
+      <div class="page-title">設定休假日</div>
+      <div class="page-subtitle">HOLIDAY SETTINGS</div>
+    </div>
+
+    <!-- Step 1: Pick barber + navigate month -->
+    <div class="card" style="max-width:560px;margin-bottom:14px">
+      <div class="card-title"><span class="dot" style="background:var(--gold)"></span>選擇理髮師</div>
+      <div style="display:flex;gap:10px;margin-bottom:0">
+        <button id="hol-btn-yujun" class="btn btn-secondary" style="flex:1;padding:12px;font-size:14px;font-weight:600;border:2px solid var(--border)" onclick="holSelectBarber('yujun')">渝鈞</button>
+        <button id="hol-btn-xien"  class="btn btn-secondary" style="flex:1;padding:12px;font-size:14px;font-weight:600;border:2px solid var(--border)" onclick="holSelectBarber('xien')">錫恩</button>
+      </div>
+    </div>
+
+    <!-- Calendar editor -->
+    <div class="card" style="max-width:560px;margin-bottom:14px" id="hol-cal-card">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+        <button class="btn btn-secondary btn-sm" onclick="holPrevMonth()">‹</button>
+        <span id="hol-cal-title" style="font-size:15px;font-weight:700"></span>
+        <button class="btn btn-secondary btn-sm" onclick="holNextMonth()">›</button>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:2px;margin-bottom:6px">
+        <div style="text-align:center;font-size:11px;color:var(--text-light);padding:4px">日</div>
+        <div style="text-align:center;font-size:11px;color:var(--text-light);padding:4px">一</div>
+        <div style="text-align:center;font-size:11px;color:var(--text-light);padding:4px">二</div>
+        <div style="text-align:center;font-size:11px;color:var(--text-light);padding:4px">三</div>
+        <div style="text-align:center;font-size:11px;color:var(--text-light);padding:4px">四</div>
+        <div style="text-align:center;font-size:11px;color:var(--text-light);padding:4px">五</div>
+        <div style="text-align:center;font-size:11px;color:var(--text-light);padding:4px">六</div>
+      </div>
+      <div id="hol-cal-days" style="display:grid;grid-template-columns:repeat(7,1fr);gap:4px"></div>
+      <div style="margin-top:14px;display:flex;gap:8px;align-items:center;font-size:12px;color:var(--text-light)">
+        <span id="hol-legend-dot" style="width:10px;height:10px;border-radius:50%;background:var(--yujun);display:inline-block"></span>
+        <span id="hol-legend-label">點選日期設定／取消休假</span>
+      </div>
+      <div style="margin-top:14px;display:flex;gap:10px">
+        <button class="btn btn-primary" onclick="holSave()" id="hol-save-btn">儲存此月設定</button>
+        <span id="hol-save-msg" style="font-size:13px;color:var(--green);line-height:2.2;display:none">已儲存，即時更新</span>
+      </div>
+    </div>
+
+    <!-- Overview calendar: both barbers -->
+    <div class="card" style="max-width:560px">
+      <div class="card-title"><span class="dot" style="background:var(--gold)"></span>當月休假總覽</div>
+      <div style="display:flex;gap:12px;margin-bottom:12px;font-size:12px">
+        <span style="display:flex;align-items:center;gap:5px"><span style="width:12px;height:12px;border-radius:50%;background:#c9b0b0;display:inline-block"></span>渝鈞</span>
+        <span style="display:flex;align-items:center;gap:5px"><span style="width:12px;height:12px;border-radius:50%;background:#8aa4b8;display:inline-block"></span>錫恩</span>
+        <span style="display:flex;align-items:center;gap:5px"><span style="width:12px;height:12px;border-radius:3px;background:linear-gradient(135deg,#c9b0b0 50%,#8aa4b8 50%);display:inline-block"></span>兩位皆休</span>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:2px;margin-bottom:6px">
+        <div style="text-align:center;font-size:11px;color:var(--text-light);padding:4px">日</div>
+        <div style="text-align:center;font-size:11px;color:var(--text-light);padding:4px">一</div>
+        <div style="text-align:center;font-size:11px;color:var(--text-light);padding:4px">二</div>
+        <div style="text-align:center;font-size:11px;color:var(--text-light);padding:4px">三</div>
+        <div style="text-align:center;font-size:11px;color:var(--text-light);padding:4px">四</div>
+        <div style="text-align:center;font-size:11px;color:var(--text-light);padding:4px">五</div>
+        <div style="text-align:center;font-size:11px;color:var(--text-light);padding:4px">六</div>
+      </div>
+      <div id="hol-overview-cal" style="display:grid;grid-template-columns:repeat(7,1fr);gap:4px"></div>
+    </div>
+  </div>
+
+  <!-- SETTLE PAGE -->
+  <div class="page" id="page-settle">
+    <div class="page-header">
+      <div class="page-title">當日結款</div>
+      <div class="page-subtitle">DAILY SETTLEMENT</div>
+    </div>
+    <div class="card" style="max-width:440px">
+      <div style="font-size:14px;color:var(--text-mid);margin-bottom:16px">
+        請選擇今日結款人，並輸入後台密碼確認。
+      </div>
+      <div class="settle-who">
+        <button class="settle-btn" id="settle-yujun" onclick="pickSettler('yujun')">渝鈞</button>
+        <button class="settle-btn" id="settle-xien" onclick="pickSettler('xien')">錫恩</button>
+      </div>
+      <div class="form-row">
+        <div>
+          <label class="f-label">後台密碼</label>
+          <input class="f-input" type="password" id="settle-pw" placeholder="輸入密碼確認">
+        </div>
+      </div>
+      <div style="display:flex;gap:10px;align-items:center">
+        <button class="btn btn-primary" onclick="confirmSettle()">確認結款</button>
+        <button class="btn btn-danger btn-sm" id="resettle-btn" style="display:none" onclick="openResettleModal()">重新結款</button>
+      </div>
+      <div id="settle-today-status" style="margin-top:10px;font-size:13px;color:var(--green);display:none"></div>
+      <div id="settle-msg" style="margin-top:12px;font-size:14px;display:none"></div>
+    </div>
+    <div class="card" style="margin-top:0">
+      <div class="card-title">已結款紀錄</div>
+      <div id="settle-records"></div>
+    </div>
+  </div>
+
+
+</div><!-- end main-content -->
+
+<!-- BOOKING DETAIL MODAL -->
+<div class="modal-overlay" id="bk-modal">
+  <div class="modal-box">
+    <div class="modal-header">
+      <div class="modal-title" id="bk-modal-title">預約詳情</div>
+      <button class="modal-close" onclick="closeModal('bk-modal')">✕</button>
+    </div>
+    <div id="bk-modal-body"></div>
+    <div class="modal-footer" id="bk-modal-footer"></div>
+  </div>
+</div>
+
+<!-- QUICK ADD MODAL (from today slots) -->
+<div class="modal-overlay" id="quick-modal">
+  <div class="modal-box">
+    <div class="modal-header">
+      <div class="modal-title">快速預約</div>
+      <button class="modal-close" onclick="closeModal('quick-modal')">✕</button>
+    </div>
+    <div id="quick-modal-body"></div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('quick-modal')">取消</button>
+      <button class="btn btn-primary" onclick="quickAddSubmit()">確認新增</button>
+    </div>
+  </div>
+</div>
+
+<!-- EDIT LOCK MODAL -->
+<div class="modal-overlay" id="edit-lock-modal">
+  <div class="modal-box" style="max-width:340px;text-align:center">
+    <div class="modal-header">
+      <div class="modal-title">已結款日期 — 需驗證身份</div>
+      <button class="modal-close" onclick="closeModal('edit-lock-modal')">✕</button>
+    </div>
+    <p style="font-size:13px;color:var(--text-mid);margin-bottom:16px">此日期已完成結款，編輯需輸入指定密碼。</p>
+    <input class="f-input" type="password" id="edit-lock-pw" placeholder="輸入密碼" style="margin-bottom:10px" onkeydown="if(event.key==='Enter')confirmEditLock()">
+    <div id="edit-lock-err" style="color:var(--red);font-size:12px;margin-bottom:10px;display:none">密碼錯誤，請重新輸入。</div>
+    <div class="modal-footer" style="justify-content:center">
+      <button class="btn btn-secondary" onclick="closeModal('edit-lock-modal')">取消</button>
+      <button class="btn btn-primary" onclick="confirmEditLock()">確認</button>
+    </div>
+  </div>
+</div>
+
+<!-- CANCEL REASON MODAL -->
+<div class="modal-overlay" id="cancel-reason-modal">
+  <div class="modal-box" style="max-width:380px">
+    <div class="modal-header">
+      <div class="modal-title">取消預約原因</div>
+      <button class="modal-close" onclick="closeModal('cancel-reason-modal')">✕</button>
+    </div>
+    <p style="font-size:13px;color:var(--text-mid);margin-bottom:14px">請填寫取消原因，系統將一併記錄。</p>
+    <div class="form-row" style="margin-bottom:0">
+      <div>
+        <label class="f-label">取消原因 <span class="req">*</span></label>
+        <textarea class="f-textarea" id="cancel-reason-input" placeholder="例：客人主動取消、颱風假..." style="min-height:80px"></textarea>
+        <div id="cancel-reason-err" style="color:var(--red);font-size:12px;margin-top:4px;display:none">請填寫取消原因</div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('cancel-reason-modal')">返回</button>
+      <button class="btn btn-danger" onclick="confirmCancelBooking()">確認取消預約</button>
+    </div>
+  </div>
+</div>
+
+<!-- CANCEL DETAIL MODAL -->
+<div class="modal-overlay" id="cancel-detail-modal">
+  <div class="modal-box">
+    <div class="modal-header">
+      <div class="modal-title" id="cancel-detail-title">取消紀錄詳情</div>
+      <button class="modal-close" onclick="closeModal('cancel-detail-modal')">✕</button>
+    </div>
+    <div id="cancel-detail-body"></div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('cancel-detail-modal')">關閉</button>
+    </div>
+  </div>
+</div>
+
+<!-- RESETTLE MODAL -->
+<div class="modal-overlay" id="resettle-modal">
+  <div class="modal-box" style="max-width:380px">
+    <div class="modal-header">
+      <div class="modal-title">重新結款</div>
+      <button class="modal-close" onclick="closeModal('resettle-modal')">✕</button>
+    </div>
+    <p style="font-size:13px;color:var(--text-mid);margin-bottom:14px">今日已完成結款。重新結款將覆蓋原有紀錄，請填寫原因。</p>
+    <div class="form-row" style="margin-bottom:10px">
+      <div>
+        <label class="f-label">重新結款原因 <span class="req">*</span></label>
+        <textarea class="f-textarea" id="resettle-reason" placeholder="請說明重新結款的原因（例：金額有誤、補漏項目...）" style="min-height:80px"></textarea>
+      </div>
+    </div>
+    <div class="form-row" style="margin-bottom:0">
+      <div>
+        <label class="f-label">後台密碼 <span class="req">*</span></label>
+        <input class="f-input" type="password" id="resettle-pw" placeholder="輸入密碼確認">
+        <div id="resettle-err" style="color:var(--red);font-size:12px;margin-top:4px;display:none">密碼錯誤，請重新輸入。</div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('resettle-modal')">取消</button>
+      <button class="btn btn-danger" onclick="confirmResettle()">確認重新結款</button>
+    </div>
+  </div>
+</div>
+
+<!-- SETTLE CONFIRM MODAL -->
+<div class="modal-overlay" id="settle-modal">
+  <div class="modal-box" style="text-align:center">
+    <div style="font-size:18px;font-weight:700;margin-bottom:8px" id="settle-modal-text"></div>
+    <button class="btn btn-primary" style="margin-top:16px" onclick="closeModal('settle-modal')">確認</button>
+  </div>
+</div>
+
+<script>
+const ADMIN_PW = 'xuri2024';
+let loggedIn = false;
+let isMobile = false;
+let viewDate = new Date();
+let calPageYear, calPageMonth;
+const today = new Date();
+calPageYear = today.getFullYear();
+calPageMonth = today.getMonth();
+
+// ── VERSION SELECTOR ──
+function selectVersion(v){
+  isMobile = (v==='mobile');
+  if(isMobile) document.body.classList.add('mobile-mode');
+  else document.body.classList.remove('mobile-mode');
+  document.getElementById('version-screen').style.display='none';
+  document.getElementById('login-screen').style.display='flex';
+}
+
+// ── MOBILE NAV ──
+function toggleMobileMore(){
+  document.getElementById('mobile-more-menu').classList.toggle('open');
+}
+function closeMobileMore(){
+  document.getElementById('mobile-more-menu').classList.remove('open');
+}
+function syncMobileNav(id){
+  if(!isMobile) return;
+  const map = {
+    'overview':'mn-overview','calendar':'mn-calendar',
+    'add-booking':'mn-add','bookings':'mm-bookings',
+    'search':'mm-search','cancels':'mm-cancels',
+    'holidays':'mm-holidays','settle':'mm-settle'
+  };
+  document.querySelectorAll('.mobile-nav-item,.mobile-more-item').forEach(el=>el.classList.remove('active'));
+  const target = map[id];
+  if(target){ const el=document.getElementById(target); if(el) el.classList.add('active'); }
+  // Highlight "更多" tab if a sub-page is active
+  const morePages=['bookings','search','cancels','holidays','settle'];
+  if(morePages.includes(id)){
+    const mn=document.getElementById('mn-more');
+    if(mn) mn.classList.add('active');
+  }
+}
+
+// ── FIREBASE CONFIG ──
+const FIREBASE_CONFIG = {
+  apiKey: "AIzaSyDS2oe-7G3Y_1zjEKfaX60MYLSE48J22u4",
+  authDomain: "xuri-barber-shop-274e1.firebaseapp.com",
+  projectId: "xuri-barber-shop-274e1",
+  storageBucket: "xuri-barber-shop-274e1.firebasestorage.app",
+  messagingSenderId: "353337881580",
+  appId: "1:353337881580:web:c9642f85646f006c73c6c9"
+};
+
+// ── IN-MEMORY CACHE ──
+let _bookings = [];
+let _holidays = {};
+let _cancels = {};
+let _notifs = [];
+let _settlements = [];
+let _firebaseReady = false;
+let _db = null;
+
+async function initFirebase() {
+  try {
+    const { initializeApp } = await import('https://www.gstatic.com/firebasejs/12.14.0/firebase-app.js');
+    const { getFirestore, doc, getDoc, setDoc, collection, onSnapshot } =
+      await import('https://www.gstatic.com/firebasejs/12.14.0/firebase-firestore.js');
+    const app = initializeApp(FIREBASE_CONFIG);
+    _db = getFirestore(app);
+    _firebaseReady = true;
+
+    // Load config docs
+    const [holSnap, canSnap, notifSnap, settleSnap] = await Promise.all([
+      getDoc(doc(_db,'config','holidays')),
+      getDoc(doc(_db,'config','cancels')),
+      getDoc(doc(_db,'config','notifs')),
+      getDoc(doc(_db,'config','settlements')),
+    ]);
+    if(holSnap.exists())    _holidays    = holSnap.data().data    || {};
+    if(canSnap.exists())    _cancels     = canSnap.data().data    || {};
+    if(notifSnap.exists())  _notifs      = notifSnap.data().data  || [];
+    if(settleSnap.exists()) _settlements = settleSnap.data().data || [];
+
+    // Real-time listener for bookings
+    onSnapshot(collection(_db,'bookings'), (snap) => {
+      _bookings = snap.docs.map(d=>({id:d.id,...d.data()}));
+      if(loggedIn){ renderOverview(); renderBookingsPage(); renderCalPage(); }
+    });
+
+    return true;
+  } catch(e) {
+    console.error('Firebase failed, using localStorage', e);
+    _bookings    = getData('xuri_bookings',[]);
+    _holidays    = getData('xuri_holidays',{});
+    _cancels     = getData('xuri_cancels',{});
+    _notifs      = getData('xuri_notifs',[]);
+    _settlements = getData('xuri_settlements',[]);
+    return false;
+  }
+}
+
+// ── LOCAL FALLBACK ──
+function getData(k,d){ try{ const v=localStorage.getItem(k); return v?JSON.parse(v):d; }catch{ return d; } }
+function setData(k,v){ try{ localStorage.setItem(k,JSON.stringify(v)); }catch{} }
+
+// ── SYNC READS FROM CACHE ──
+function getBookings()    { return _bookings; }
+function getHolidays()    { return _holidays; }
+function getCancels()     { return _cancels; }
+function getNotifs()      { return _notifs; }
+function getSettlements() { return _settlements; }
+
+// ── ASYNC WRITES ──
+async function _saveConfig(docId, data){
+  if(_firebaseReady && _db){
+    const {doc,setDoc} = await import('https://www.gstatic.com/firebasejs/12.14.0/firebase-firestore.js');
+    await setDoc(doc(_db,'config',docId),{data});
+  } else { setData('xuri_'+docId, data); }
+}
+async function saveBookings(bArr){
+  _bookings=bArr;
+  if(_firebaseReady && _db){
+    const {doc,setDoc} = await import('https://www.gstatic.com/firebasejs/12.14.0/firebase-firestore.js');
+    for(const b of bArr) await setDoc(doc(_db,'bookings',b.id),b);
+  } else { setData('xuri_bookings',bArr); }
+}
+async function saveHolidaysData(h){ _holidays=h; await _saveConfig('holidays',h); }
+async function saveCancels(c)     { _cancels=c;  await _saveConfig('cancels',c); }
+async function saveNotifs(n)      { _notifs=n;   await _saveConfig('notifs',n); }
+async function saveSettlements(s) { _settlements=s; await _saveConfig('settlements',s); }
+
+// Add/update single booking doc
+async function upsertBookingDoc(b){
+  _bookings = [..._bookings.filter(x=>x.id!==b.id), b];
+  if(_firebaseReady && _db){
+    const {doc,setDoc} = await import('https://www.gstatic.com/firebasejs/12.14.0/firebase-firestore.js');
+    await setDoc(doc(_db,'bookings',b.id),b);
+  } else {
+    setData('xuri_bookings',_bookings);
+  }
+}
+
+// ── LOGIN ──
+function doLogin(){
+  const pw = document.getElementById('login-pw').value;
+  if(pw === ADMIN_PW){
+    loggedIn = true;
+    document.getElementById('login-screen').style.display='none';
+    initAdmin();
+  } else {
+    document.getElementById('login-error').style.display='block';
+  }
+}
+function doLogout(){
+  loggedIn=false;
+  document.getElementById('login-screen').style.display='none';
+  document.getElementById('version-screen').style.display='flex';
+  document.body.classList.remove('mobile-mode');
+  isMobile=false;
+}
+
+// ── SERVICES ──
+function getServices(barber,month){
+  const isSummer = month>=5&&month<=7;
+  if(barber==='xien'&&isSummer){
+    return [
+      {id:'wash-cut-shave',label:'洗＋剪＋修容',price:500,slots:1},
+      {id:'basic-color',label:'基本單色染髮',price:1800,slots:2},
+      {id:'special-color',label:'特殊色染髮',price:null,slots:null},
+      {id:'children',label:'兒童理髮',price:null,slots:1},
+      {id:'adult-child',label:'大人＋小孩',price:null,slots:1},
+    ];
+  }
+  return [
+    {id:'haircut-shampoo',label:'理髮＋洗髮',price:600,slots:1},
+    {id:'haircut',label:'精緻理髮',price:500,slots:1},
+    {id:'basic-color',label:'基本單色染髮',price:1800,slots:2},
+    {id:'special-color',label:'特殊色染髮',price:null,slots:null},
+    {id:'children',label:'兒童理髮',price:null,slots:1},
+    {id:'adult-child',label:'大人＋小孩',price:null,slots:1},
+  ];
+}
+
+// ── INIT ──
+(function seedHolidays(){
+  const h=getHolidays();
+  if(!h['2026-06']){
+    h['2026-06']={yujun:[3,9,17,25],xien:[1,2,3,4,5,8,9,10,11,12,15,16,17,18,19,20,21,22,23,24,25,26,29,30]};
+    setData('xuri_holidays',h);
+  }
+})();
+
+async function initAdmin(){
+  await initFirebase();
+  document.getElementById('today-str').textContent = formatDate(today);
+  viewDate = new Date(today);
+  updateViewLabel();
+  renderOverview();
+  renderCalPage();
+  renderBookingsPage();
+  renderHolidayOverview();
+  renderSettleRecords();
+  renderNotifDrawer();
+  updateBellDot();
+  populateMonthFilter();
+  initCancelYearFilter();
+  initHolForm();
+  setInterval(pollUpdates, 5000);
+  setInterval(renderAbSlots, 5000);
+}
+
+function pollUpdates(){
+  updateBellDot();
+}
+
+// ── NAV ──
+function showPage(id){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
+  const items = document.querySelectorAll('.nav-item');
+  const pageMap = {overview:0,calendar:1,bookings:2,'add-booking':3,search:4,cancels:5,holidays:6,settle:7};
+  if(pageMap[id]!==undefined) items[pageMap[id]].classList.add('active');
+  syncMobileNav(id);
+  if(isMobile) window.scrollTo({top:0,behavior:'smooth'});
+  if(id==='calendar') renderCalPage();
+  if(id==='bookings') renderBookingsPage();
+  if(id==='cancels') renderCancelsPage();
+  if(id==='holidays'){ renderHolidayOverview(); renderHolCal(); renderHolOverviewCal(); }
+  if(id==='settle'){ renderSettleRecords(); updateSettleTodayStatus(); }
+}
+
+// ── DATE UTILS ──
+function formatDate(d){ return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
+function parseDate(s){ const[y,m,d]=s.split('-').map(Number); return new Date(y,m-1,d); }
+function monthKey(y,m){ return y+'-'+String(m+1).padStart(2,'0'); }
+// 後台時段（含 13:00）
+function getSlotsForDow(dow){
+  if(dow===0||dow===1||dow===3) return [10,11,12,13,14,15,16,17,18,19];
+  return [10,11,12,13,14,15,16,17,18,19,20];
+}
+function prevDay(){ viewDate.setDate(viewDate.getDate()-1); updateViewLabel(); renderOverview(); }
+function nextDay(){ viewDate.setDate(viewDate.getDate()+1); updateViewLabel(); renderOverview(); }
+function goToday(){ viewDate=new Date(today); updateViewLabel(); renderOverview(); }
+function updateViewLabel(){
+  const wd=['日','一','二','三','四','五','六'];
+  document.getElementById('view-date-label').textContent = formatDate(viewDate)+' ('+wd[viewDate.getDay()]+')';
+}
+
+// ── OVERVIEW ──
+function renderOverview(){
+  const dateStr = formatDate(viewDate);
+  const bk = getBookings();
+  const dow = viewDate.getDay();
+  const slots = getSlotsForDow(dow);
+  const holidays = getHolidays();
+  const mk = monthKey(viewDate.getFullYear(), viewDate.getMonth());
+  const monthHols = holidays[mk] || {};
+
+  // Stats for current month
+  const cm = viewDate.getMonth(); const cy = viewDate.getFullYear();
+  const monthBk = bk.filter(b=>{
+    const d=parseDate(b.date);
+    return d.getMonth()===cm&&d.getFullYear()===cy&&b.status!=='cancelled';
+  });
+  const todayBk = bk.filter(b=>b.date===dateStr&&b.status!=='cancelled');
+
+  // Settlements for month revenue
+  const settlements = getSettlements();
+  const settledDates = new Set(settlements.filter(s=>s.year===cy&&s.month===cm).map(s=>s.date));
+  const settledRevenue = bk.filter(b=>{
+    const d=parseDate(b.date);
+    return d.getMonth()===cm&&d.getFullYear()===cy&&b.status!=='cancelled'&&settledDates.has(b.date);
+  }).reduce((a,b)=>a+(b.finalPrice||b.price||0),0);
+
+  const todayRevenue = todayBk.reduce((a,b)=>a+(b.finalPrice||b.price||0),0);
+  const cancelCount = bk.filter(b=>{
+    const d=parseDate(b.date);
+    return d.getMonth()===cm&&d.getFullYear()===cy&&b.status==='cancelled';
+  }).length;
+
+  document.getElementById('stats-grid').innerHTML = `
+    <div class="stat-card">
+      <div class="stat-label">本月總業績（已結款）</div>
+      <div class="stat-value">$<span>${settledRevenue.toLocaleString()}</span></div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">當日業績</div>
+      <div class="stat-value">$<span>${todayRevenue.toLocaleString()}</span></div>
+      <div class="stat-sub">${dateStr}</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">本月預約數</div>
+      <div class="stat-value">${monthBk.length}</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">本月取消數</div>
+      <div class="stat-value" style="color:var(--red)">${cancelCount}</div>
+    </div>
+  `;
+
+  // Barber stats
+  document.getElementById('barber-stats-wrap').innerHTML = ['yujun','xien'].map(b=>{
+    const bLabel=b==='yujun'?'渝鈞':'錫恩';
+    const myBk=monthBk.filter(x=>x.barber===b);
+    const designated=myBk.filter(x=>x.type==='designated').length;
+    const walkin=myBk.filter(x=>x.type==='walkin').length;
+    const total=myBk.length;
+    const ratio=total>0?Math.round((designated/total)*100):0;
+    const revenue=myBk.reduce((a,x)=>a+(x.finalPrice||x.price||0),0);
+    return `<div class="barber-stat-card ${b}">
+      <div class="barber-stat-name">${bLabel}</div>
+      <div class="barber-stat-row"><span class="k">指定客</span><span class="v">${designated}</span></div>
+      <div class="barber-stat-row"><span class="k">散客</span><span class="v">${walkin}</span></div>
+      <div class="barber-stat-row"><span class="k">總預約數</span><span class="v">${total}</span></div>
+      <div class="barber-stat-row"><span class="k">指定客比例</span><span class="v" style="color:var(--gold-dark)">${ratio}%</span></div>
+      <div style="height:6px;background:var(--border);border-radius:3px;margin:8px 0 4px;overflow:hidden">
+        <div style="height:100%;width:${ratio}%;background:var(--gold);border-radius:3px;transition:width 0.4s"></div>
+      </div>
+      <div class="barber-stat-row"><span class="k">當月業績</span><span class="v">$${revenue.toLocaleString()}</span></div>
+    </div>`;
+  }).join('');
+
+  // Today schedule
+  const dayBk = bk.filter(b=>b.date===dateStr).sort((a,b2)=>a.hour-b2.hour);
+  if(dayBk.length===0){
+    document.getElementById('today-schedule').innerHTML='<div style="color:var(--text-light);font-size:13px;padding:8px 0">當日尚無預約</div>';
+  } else {
+    document.getElementById('today-schedule').innerHTML = dayBk.map(b=>`
+      <div class="schedule-row">
+        <div class="schedule-time">${String(b.hour).padStart(2,'0')}:00</div>
+        <div class="schedule-slot ${b.barber} ${b.status==='cancelled'?'':''}">
+          <div class="schedule-slot-name">${b.name} ${b.title} ${b.status==='cancelled'?'（已取消）':''}</div>
+          <div class="schedule-slot-svc">${b.serviceLabel}${(b.slots||1)>1?' ×'+b.slots+'h':''}</div>
+          ${renderTags(b.tags||[])}
+        </div>
+        <button class="schedule-edit-btn" onclick="tryOpenBookingModal('${b.id}')">編輯</button>
+      </div>
+    `).join('');
+  }
+
+  // Available slots
+  const bookedSlots = {yujun:new Set(), xien:new Set()};
+  bk.filter(b2=>b2.date===dateStr&&b2.status!=='cancelled').forEach(b2=>{
+    const n=b2.slots||1;
+    for(let i=0;i<n;i++) bookedSlots[b2.barber].add(b2.hour+i);
+  });
+
+  let slotsHtml='<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">';
+  ['yujun','xien'].forEach(barber=>{
+    const bLabel=barber==='yujun'?'渝鈞':'錫恩';
+    const barberHols=(monthHols[barber]||[]);
+    const isHoliday=barberHols.includes(viewDate.getDate());
+    slotsHtml+=`<div><div style="font-size:13px;font-weight:600;margin-bottom:8px;color:${barber==='yujun'?'var(--yujun-dark)':'var(--xien-dark)'}">${bLabel}</div>`;
+    if(isHoliday){
+      slotsHtml+='<div style="font-size:12px;color:var(--text-light)">休假日</div>';
+    } else {
+      slotsHtml+='<div style="display:flex;flex-wrap:wrap;gap:4px">';
+      slots.forEach(h=>{
+        const taken=bookedSlots[barber].has(h);
+        if(!taken){
+          slotsHtml+=`<button style="padding:5px 10px;font-size:12px;border-radius:6px;border:1px solid ${barber==='yujun'?'var(--yujun)':'var(--xien)'};background:${barber==='yujun'?'#f7f0f0':'#f0f4f7'};cursor:pointer" onclick="quickAdd('${barber}','${dateStr}',${h})">${String(h).padStart(2,'0')}:00</button>`;
+        }
+      });
+      slotsHtml+='</div>';
+    }
+    slotsHtml+='</div>';
+  });
+  slotsHtml+='</div>';
+  document.getElementById('today-slots-wrap').innerHTML=slotsHtml;
+}
+
+// ── CALENDAR PAGE ──
+function prevCalPage(){ calPageMonth--; if(calPageMonth<0){calPageMonth=11;calPageYear--;} renderCalPage(); }
+function nextCalPage(){ calPageMonth++; if(calPageMonth>11){calPageMonth=0;calPageYear++;} renderCalPage(); }
+function renderCalPage(){
+  const mn=['一月','二月','三月','四月','五月','六月','七月','八月','九月','十月','十一月','十二月'];
+  const wd=['日','一','二','三','四','五','六'];
+  document.getElementById('cal-page-title').textContent=calPageYear+' 年 '+mn[calPageMonth];
+
+  // Always show weekday header
+  const hdrGrid = document.querySelector('#page-calendar .cal-grid:not(#cal-body)');
+  if(hdrGrid) hdrGrid.style.display='';
+
+  const firstDay=new Date(calPageYear,calPageMonth,1).getDay();
+  const days=new Date(calPageYear,calPageMonth+1,0).getDate();
+  const bk=getBookings();
+  const holidays=getHolidays();
+  const mk=monthKey(calPageYear,calPageMonth);
+  const monthHols=holidays[mk]||{};
+
+  let html='';
+  for(let i=0;i<firstDay;i++) html+='<div class="cal-cell other-month"></div>';
+
+  for(let d=1;d<=days;d++){
+    const dateStr=calPageYear+'-'+String(calPageMonth+1).padStart(2,'0')+'-'+String(d).padStart(2,'0');
+    const dayBk=bk.filter(b=>b.date===dateStr&&b.status!=='cancelled').sort((a,b2)=>a.hour-b2.hour);
+    const isToday=new Date(calPageYear,calPageMonth,d).toDateString()===today.toDateString();
+    const isYHol=(monthHols.yujun||[]).includes(d);
+    const isXHol=(monthHols.xien||[]).includes(d);
+
+    if(isMobile){
+      // Mobile: compact cells — dot indicators only, tap to see detail
+      const yDot = isYHol ? '' : (dayBk.some(b=>b.barber==='yujun') ? `<span style="width:5px;height:5px;border-radius:50%;background:#c9b0b0;display:inline-block;flex-shrink:0"></span>` : '');
+      const xDot = isXHol ? '' : (dayBk.some(b=>b.barber==='xien')  ? `<span style="width:5px;height:5px;border-radius:50%;background:#8aa4b8;display:inline-block;flex-shrink:0"></span>` : '');
+      const holMark = (isYHol&&isXHol) ? `<div style="font-size:8px;color:#b09090;line-height:1.2;margin-top:1px">休</div>`
+        : isYHol ? `<div style="width:100%;height:3px;background:#c9b0b0;border-radius:2px;margin-top:2px"></div>`
+        : isXHol ? `<div style="width:100%;height:3px;background:#8aa4b8;border-radius:2px;margin-top:2px"></div>` : '';
+      const count = dayBk.length;
+      html+=`<div class="cal-cell${isToday?' today-cell':''}" onclick="calDayClick('${dateStr}')" style="display:flex;flex-direction:column;align-items:center;padding:4px 2px;min-height:52px">
+        <div style="font-size:13px;font-weight:${isToday?'700':'500'};color:${isToday?'var(--gold-dark)':'var(--text-dark)'};line-height:1.3">${d}</div>
+        ${holMark}
+        ${count>0?`<div style="display:flex;gap:2px;flex-wrap:wrap;justify-content:center;margin-top:3px">${yDot}${xDot}</div>`:''}
+        ${count>0?`<div style="font-size:9px;color:var(--text-light);margin-top:2px">${count}筆</div>`:''}
+      </div>`;
+    } else {
+      html+=`<div class="cal-cell${isToday?' today-cell':''}" onclick="calDayClick('${dateStr}')">
+        <div class="cal-date">${d}</div>
+        ${dayBk.slice(0,3).map(b=>`<div class="cal-booking-chip ${b.barber}">${String(b.hour).padStart(2,'0')}:00 ${b.name}${b.title}</div>`).join('')}
+        ${dayBk.length>3?`<div style="font-size:10px;color:var(--text-light)">+${dayBk.length-3} 筆</div>`:''}
+      </div>`;
+    }
+  }
+  document.getElementById('cal-body').innerHTML=html;
+}
+
+function calDayClick(dateStr){
+  const bk=getBookings().filter(b=>b.date===dateStr).sort((a,b)=>a.hour-b.hour);
+  let html=`<div style="font-size:15px;font-weight:700;margin-bottom:12px">${dateStr}</div>`;
+  if(bk.length===0){ html+='<div style="color:var(--text-light);font-size:13px">當日無預約</div>'; }
+  else {
+    html+=bk.map(b=>`
+      <div style="display:flex;align-items:center;gap:8px;padding:8px;border-radius:8px;margin-bottom:6px;background:${b.barber==='yujun'?'#f7f0f0':'#f0f4f7'};border:1px solid ${b.barber==='yujun'?'var(--yujun)':'var(--xien)'}">
+        <span style="font-weight:700;min-width:55px;font-size:13px">${String(b.hour).padStart(2,'0')}:00</span>
+        <span style="flex:1;font-size:13px">${b.name}${b.title} · ${b.serviceLabel}</span>
+        ${renderTags(b.tags||[])}
+        <span class="badge ${b.status==='cancelled'?'cancelled':'confirmed'}">${b.status==='cancelled'?'已取消':'已確認'}</span>
+        <button class="btn btn-secondary btn-sm" onclick="tryOpenBookingModal('${b.id}')">編輯</button>
+      </div>
+    `).join('');
+  }
+  document.getElementById('bk-modal-title').textContent=dateStr+' 預約';
+  document.getElementById('bk-modal-body').innerHTML=html;
+  document.getElementById('bk-modal-footer').innerHTML='<button class="btn btn-secondary" onclick="closeModal(\'bk-modal\')">關閉</button>';
+  document.getElementById('bk-modal').classList.add('active');
+}
+
+// ── BOOKINGS PAGE ──
+function populateMonthFilter(){
+  const bk=getBookings();
+  const months=new Set(bk.map(b=>b.date.substring(0,7)));
+  const sel=document.getElementById('bk-filter-month');
+  const cur=sel.value;
+  sel.innerHTML='<option value="">全部月份</option>';
+  [...months].sort().reverse().forEach(m=>{
+    const opt=document.createElement('option');
+    opt.value=m; opt.textContent=m;
+    if(m===cur) opt.selected=true;
+    sel.appendChild(opt);
+  });
+}
+function renderBookingsPage(){
+  const filterMonth=document.getElementById('bk-filter-month').value;
+  const filterBarber=document.getElementById('bk-filter-barber').value;
+  let bk=getBookings();
+  if(filterMonth) bk=bk.filter(b=>b.date.startsWith(filterMonth));
+  if(filterBarber) bk=bk.filter(b=>b.barber===filterBarber);
+  bk.sort((a,b2)=>b2.date.localeCompare(a.date)||a.hour-b2.hour);
+  if(bk.length===0){
+    document.getElementById('bookings-table-wrap').innerHTML='<div style="color:var(--text-light);font-size:13px;padding:8px">無預約資料</div>';
+    return;
+  }
+  document.getElementById('bookings-table-wrap').innerHTML=`
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>日期時段</th><th>理髮師</th><th>姓名</th><th>服務</th><th>金額</th><th>狀態</th><th>操作</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${bk.map(b=>`
+          <tr>
+            <td>${b.date} ${String(b.hour).padStart(2,'0')}:00</td>
+            <td><span class="badge ${b.barber+'-b'}">${b.barber==='yujun'?'渝鈞':'錫恩'}</span></td>
+            <td>${b.name}${b.title} <span class="badge ${b.type==='designated'?'designated':'walkin'}">${b.type==='designated'?'指定':'散客'}</span>${renderTags(b.tags||[])}</td>
+            <td>${b.serviceLabel}</td>
+            <td>${b.finalPrice!==undefined?'$'+(b.finalPrice||0):(b.price?'$'+b.price:'—')}</td>
+            <td><span class="badge ${b.status==='cancelled'?'cancelled':b.status==='rebooked'?'rebooked':'confirmed'}">${b.status==='cancelled'?'已取消':b.status==='rebooked'?'已改期':'已確認'}</span></td>
+            <td><button class="btn btn-secondary btn-sm" onclick="tryOpenBookingModal('${b.id}')">編輯</button></td>
+          </tr>
+        `).join('')}
+      </tbody>
+    </table>
+  `;
+}
+
+// ── BOOKING MODAL ──
+const EDIT_LOCK_PW = 'yujun728';
+let pendingEditId = null;
+
+function isDateSettled(dateStr){
+  const settlements = getSettlements();
+  return settlements.some(s => s.date === dateStr);
+}
+
+function tryOpenBookingModal(id){
+  const bk = getBookings();
+  const b = bk.find(x => x.id === id);
+  if(!b) return;
+  if(isDateSettled(b.date)){
+    pendingEditId = id;
+    document.getElementById('edit-lock-pw').value = '';
+    document.getElementById('edit-lock-err').style.display = 'none';
+    document.getElementById('edit-lock-modal').classList.add('active');
+  } else {
+    openBookingModal(id);
+  }
+}
+function confirmEditLock(){
+  const pw = document.getElementById('edit-lock-pw').value;
+  if(pw !== EDIT_LOCK_PW){
+    document.getElementById('edit-lock-err').style.display = 'block';
+    return;
+  }
+  closeModal('edit-lock-modal');
+  if(pendingEditId) openBookingModal(pendingEditId);
+  pendingEditId = null;
+}
+
+function openBookingModal(id){
+  const bk=getBookings();
+  const b=bk.find(x=>x.id===id);
+  if(!b) return;
+  const monthIdx=parseDate(b.date).getMonth();
+  const services=getServices(b.barber,monthIdx);
+  const rebookHistory = b.rebookHistory||[];
+  const rebookCount = rebookHistory.length;
+  const timeEnd = String(b.hour+(b.slots||1)).padStart(2,'0')+':00';
+  const timeFmt = String(b.hour).padStart(2,'0')+':00 – '+timeEnd;
+
+  document.getElementById('bk-modal-title').textContent='預約詳情';
+  document.getElementById('bk-modal-body').innerHTML=`
+    <div style="display:grid;gap:12px">
+
+      <div style="background:var(--cream);border:1px solid var(--border);border-radius:8px;padding:12px 14px;font-size:13px;line-height:2;color:var(--text-mid)">
+        <div style="display:flex;justify-content:space-between">
+          <span style="color:var(--text-light)">客人</span>
+          <strong>${b.name}${b.title} · ${b.phone}</strong>
+        </div>
+        <div style="display:flex;justify-content:space-between">
+          <span style="color:var(--text-light)">日期</span>
+          <strong>${b.date}</strong>
+        </div>
+        <div style="display:flex;justify-content:space-between">
+          <span style="color:var(--text-light)">時段</span>
+          <strong>${timeFmt}</strong>
+        </div>
+        <div style="display:flex;justify-content:space-between">
+          <span style="color:var(--text-light)">理髮師</span>
+          <strong>${b.barberLabel}</strong>
+        </div>
+      </div>
+
+      ${rebookCount>0?`
+        <div style="background:#fdf9ef;border:1px solid #e8d9b5;border-radius:8px;padding:10px 14px;font-size:12px;color:var(--text-mid)">
+          <div style="font-weight:700;color:var(--gold-dark);margin-bottom:6px">改期紀錄（共 ${rebookCount} 次）</div>
+          ${rebookHistory.map((r,i)=>`
+            <div style="padding:4px 0;border-bottom:1px solid #e8d9b5;display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+              <span style="color:var(--text-light);min-width:14px">第${i+1}次</span>
+              <span style="color:#a07040">原：${r.fromDate} ${String(r.fromHour).padStart(2,'0')}:00</span>
+              <span style="color:var(--text-light)">→</span>
+              <span style="color:var(--green)">改至：${r.toDate} ${String(r.toHour).padStart(2,'0')}:00</span>
+              <span style="color:var(--text-light);margin-left:auto;font-size:11px">${r.at?r.at.substring(0,10):''}</span>
+            </div>
+          `).join('')}
+        </div>
+      `:''}
+
+      <div class="form-row cols-2">
+        <div>
+          <label class="f-label">服務項目</label>
+          <select class="f-select" id="edit-service">
+            ${services.map(s=>`<option value="${s.id}" ${s.id===b.serviceId?'selected':''}>${s.label}</option>`).join('')}
+          </select>
+        </div>
+        <div>
+          <label class="f-label">金額</label>
+          <input class="f-input" type="number" id="edit-price" value="${b.finalPrice!==undefined?b.finalPrice:(b.price||0)}">
+        </div>
+      </div>
+
+      <div>
+        <label class="f-label">備註</label>
+        <textarea class="f-textarea" id="edit-notes">${b.notes||''}</textarea>
+      </div>
+
+      <div>
+        <label class="f-label">預約狀態</label>
+        <select class="f-select" id="edit-status" onchange="onEditStatusChange('${id}')">
+          <option value="confirmed" ${b.status==='confirmed'?'selected':''}>已確認</option>
+          <option value="cancelled" ${b.status==='cancelled'?'selected':''}>已取消</option>
+          <option value="rebooked" ${b.status==='rebooked'?'selected':''}>已改期</option>
+        </select>
+        ${b.status==='cancelled'&&b.cancelReason?`<div style="font-size:12px;color:var(--red);margin-top:4px">取消原因：${b.cancelReason}</div>`:''}
+      </div>
+
+      <div id="rebook-section" style="display:${b.status==='rebooked'?'block':'none'};background:var(--warm-white);border:1px solid var(--border);border-radius:8px;padding:14px;overflow:hidden;min-width:0">
+        <div style="font-weight:700;color:var(--gold-dark);font-size:13px;margin-bottom:10px">改期設定</div>
+        <div style="margin-bottom:12px">
+          <label class="f-label">新日期</label>
+          <input class="f-input" type="date" id="edit-rebook-date" value="${b.rebookDate||''}" onchange="loadRebookSlots('${id}')">
+        </div>
+        <div>
+          <label class="f-label">新時段</label>
+          <select class="f-select" id="edit-rebook-slot">
+            <option value="">請先選擇日期</option>
+          </select>
+        </div>
+      </div>
+
+    </div>
+    <div style="margin-top:14px">
+      <label class="f-label" style="margin-bottom:6px">標籤</label>
+      <input class="f-input" type="text" id="edit-tags" value="${(b.tags||[]).join(',')}" placeholder="以逗號分隔標籤">
+      ${renderTags(b.tags||[])}
+    </div>
+    <div style="margin-top:16px">
+      <div class="f-label" style="margin-bottom:6px">預約通知內文（可複製）</div>
+      <div class="copy-text" id="copy-text-${id}">${genBookingText(b)}</div>
+      <button class="btn btn-secondary btn-sm" style="margin-top:6px" onclick="copyText('${id}')">複製內文</button>
+    </div>
+  `;
+  document.getElementById('bk-modal-footer').innerHTML=`
+    <button class="btn btn-secondary" onclick="closeModal('bk-modal')">關閉</button>
+    ${b.status!=='cancelled'?`<button class="btn btn-danger btn-sm" onclick="requestCancelBooking('${id}')">取消此預約</button>`:''}
+    <button class="btn btn-primary" onclick="saveBookingEdit('${id}')">儲存</button>
+  `;
+  document.getElementById('bk-modal').classList.add('active');
+  if(b.status==='rebooked'&&b.rebookDate) loadRebookSlots(id);
+}
+
+function onEditStatusChange(id){
+  const status=document.getElementById('edit-status').value;
+  const sec=document.getElementById('rebook-section');
+  if(status==='cancelled'){
+    // Revert select to previous value, use dedicated cancel button instead
+    const bk=getBookings();
+    const b=bk.find(x=>x.id===id);
+    document.getElementById('edit-status').value=b?b.status:'confirmed';
+    requestCancelBooking(id);
+    return;
+  }
+  if(status==='rebooked'){
+    sec.style.display='block';
+    loadRebookSlots(id);
+  } else {
+    sec.style.display='none';
+  }
+}
+
+function loadRebookSlots(id){
+  const bk=getBookings();
+  const b=bk.find(x=>x.id===id);
+  if(!b) return;
+  const dateInput=document.getElementById('edit-rebook-date');
+  const dateStr=dateInput?dateInput.value:'';
+  const sel=document.getElementById('edit-rebook-slot');
+  if(!sel) return;
+  if(!dateStr){
+    sel.innerHTML='<option value="">請先選擇日期</option>';
+    return;
+  }
+
+  const d=parseDate(dateStr);
+  const dow=d.getDay();
+  const dayNum=d.getDate();
+  const mk=dateStr.substring(0,7); // e.g. "2026-06"
+
+  // ── Check if selected date is a holiday for this barber ──
+  const holidays=getHolidays();
+  const monthHols=holidays[mk];
+  if(!monthHols){
+    sel.innerHTML='<option value="">該月尚未開放預約</option>';
+    return;
+  }
+  const barberHols=monthHols[b.barber]||[];
+  if(barberHols.includes(dayNum)){
+    sel.innerHTML='<option value="">該日為休假日，無法改期至此日</option>';
+    return;
+  }
+
+  // ── Build available slots ──
+  const allSlots=getSlotsForDow(d.getDay());
+  const bookedSet=new Set();
+  bk.filter(bx=>bx.date===dateStr&&bx.barber===b.barber&&bx.status!=='cancelled'&&bx.id!==id).forEach(bx=>{
+    const n=bx.slots||1;
+    for(let i=0;i<n;i++) bookedSet.add(bx.hour+i);
+  });
+
+  sel.innerHTML='<option value="">選擇開始時段</option>';
+  const need=b.slots||1;
+  allSlots.forEach(h=>{
+    let canFit=true;
+    for(let i=0;i<need;i++){
+      if(bookedSet.has(h+i)||!allSlots.includes(h+i)){ canFit=false; break; }
+    }
+    if(canFit){
+      const opt=document.createElement('option');
+      opt.value=h;
+      const endH=h+need;
+      opt.textContent=String(h).padStart(2,'0')+':00'+(need>1?' – '+String(endH).padStart(2,'0')+':00 ('+need+'小時)':'');
+      if(b.rebookHour===h) opt.selected=true;
+      sel.appendChild(opt);
+    }
+  });
+  if(sel.options.length<=1){
+    sel.innerHTML='<option value="">當日無連續'+need+'小時空檔</option>';
+  }
+}
+
+async function saveBookingEdit(id){
+  const bk=getBookings();
+  const idx=bk.findIndex(x=>x.id===id);
+  if(idx<0) return;
+  const oldStatus=bk[idx].status;
+  const newService=document.getElementById('edit-service').value;
+  const monthIdx=parseDate(bk[idx].date).getMonth();
+  const services=getServices(bk[idx].barber,monthIdx);
+  const svc=services.find(s=>s.id===newService)||services[0];
+  bk[idx].serviceId=newService;
+  bk[idx].serviceLabel=svc.label;
+  bk[idx].slots=svc.slots;
+  const rawPrice = document.getElementById('edit-price').value;
+  bk[idx].finalPrice = (rawPrice===''||rawPrice===null) ? null : (parseInt(rawPrice)||0);
+  bk[idx].notes=document.getElementById('edit-notes').value;
+  const tagsEl=document.getElementById('edit-tags');
+  if(tagsEl) bk[idx].tags=parseTags(tagsEl.value);
+  const newStatus=document.getElementById('edit-status').value;
+  bk[idx].status=newStatus;
+
+  // Handle rebook: move booking to new slot and record history
+  if(newStatus==='rebooked'){
+    const rebookDate=document.getElementById('edit-rebook-date').value;
+    const rebookHourEl=document.getElementById('edit-rebook-slot');
+    const rebookHour=rebookHourEl?parseInt(rebookHourEl.value):NaN;
+    if(rebookDate&&!isNaN(rebookHour)){
+      // Record history entry
+      if(!bk[idx].rebookHistory) bk[idx].rebookHistory=[];
+      bk[idx].rebookHistory.push({
+        fromDate: bk[idx].date,
+        fromHour: bk[idx].hour,
+        toDate: rebookDate,
+        toHour: rebookHour,
+        at: new Date().toISOString()
+      });
+      bk[idx].rebookDate=rebookDate;
+      bk[idx].rebookHour=rebookHour;
+      // Move the booking to the new date/time and mark as confirmed
+      bk[idx].date=rebookDate;
+      bk[idx].hour=rebookHour;
+      bk[idx].status='confirmed';
+    }
+  }
+
+  // Handle cancellation - update cancel list
+  if(newStatus==='cancelled'&&oldStatus!=='cancelled'){
+    const cancels=getCancels();
+    const phone=bk[idx].phone;
+    if(!cancels[phone]) cancels[phone]={count:0,records:[]};
+    cancels[phone].count++;
+    cancels[phone].records.push({date:bk[idx].date,bookingId:id,cancelledAt:new Date().toISOString()});
+    saveCancels(cancels);
+  }
+
+  await upsertBookingDoc(bk[idx]);
+  closeModal('bk-modal');
+  renderOverview(); renderCalPage(); renderBookingsPage();
+}
+
+function genBookingText(b){
+  const timeEnd=String(b.hour+b.slots).padStart(2,'0')+':00';
+  return `預約資訊：${b.name}${b.title}您好，\n您有預約 ${b.date} ${String(b.hour).padStart(2,'0')}:00–${timeEnd} ${b.serviceLabel}\n聯絡電話：${b.phone}\n如有需要改期或取消，麻煩提前一天以上通知唷～`;
+}
+function copyText(id){
+  const el=document.getElementById('copy-text-'+id);
+  if(!el) return;
+  navigator.clipboard.writeText(el.textContent).then(()=>alert('已複製！'));
+}
+
+// ── TAG HELPERS ──
+const TAG_COLORS = [
+  {bg:'#fdecea',border:'#f4a8a0',text:'#a03020'},
+  {bg:'#e8f5ee',border:'#88c8a0',text:'#1a6b3a'},
+  {bg:'#e8eef8',border:'#8aa4c8',text:'#1a3a6b'},
+  {bg:'#fdf9ef',border:'#d4b870',text:'#7a5010'},
+  {bg:'#f0e8f8',border:'#b88ad4',text:'#5a1a7a'},
+  {bg:'#e8f4f8',border:'#7ab8d4',text:'#0a4a6a'},
+];
+function getTagColor(tag){
+  let hash=0; for(let c of tag) hash=(hash*31+c.charCodeAt(0))&0xfffff;
+  return TAG_COLORS[hash % TAG_COLORS.length];
+}
+function renderTags(tags){
+  if(!tags||!tags.length) return '';
+  return `<div class="tag-wrap">${tags.map(t=>{
+    const c=getTagColor(t);
+    return `<span class="booking-tag" style="background:${c.bg};border-color:${c.border};color:${c.text}">${t}</span>`;
+  }).join('')}</div>`;
+}
+function parseTags(str){ return str.split(',').map(t=>t.trim()).filter(t=>t.length>0); }
+
+// ── CANCEL WITH REASON ──
+let pendingCancelId = null;
+function requestCancelBooking(id){
+  pendingCancelId = id;
+  document.getElementById('cancel-reason-input').value='';
+  document.getElementById('cancel-reason-err').style.display='none';
+  document.getElementById('cancel-reason-modal').classList.add('active');
+}
+async function confirmCancelBooking(){
+  const reason = document.getElementById('cancel-reason-input').value.trim();
+  if(!reason){ document.getElementById('cancel-reason-err').style.display='block'; return; }
+  closeModal('cancel-reason-modal');
+  const bk=getBookings();
+  const idx=bk.findIndex(x=>x.id===pendingCancelId);
+  if(idx<0) return;
+  const oldStatus=bk[idx].status;
+  bk[idx].status='cancelled';
+  bk[idx].cancelReason=reason;
+  bk[idx].cancelledAt=new Date().toISOString();
+  if(oldStatus!=='cancelled'){
+    const cancels=getCancels();
+    const phone=bk[idx].phone;
+    if(!cancels[phone]) cancels[phone]={count:0,records:[]};
+    cancels[phone].count++;
+    cancels[phone].records.push({date:bk[idx].date,bookingId:pendingCancelId,cancelledAt:new Date().toISOString(),reason});
+    await saveCancels(cancels);
+  }
+  await upsertBookingDoc(bk[idx]);
+  pendingCancelId=null;
+  closeModal('bk-modal');
+  renderOverview(); renderCalPage(); renderBookingsPage();
+  addNotif('取消預約：'+bk[idx].name+bk[idx].title+' '+bk[idx].date+' '+String(bk[idx].hour).padStart(2,'0')+':00 原因：'+reason);
+}
+
+// ── ADD BOOKING ──
+let abSlotInterval=null;
+function abBarberChange(){
+  const barber=document.getElementById('ab-barber').value;
+  const dateStr=document.getElementById('ab-date').value;
+  const month=dateStr?parseDate(dateStr).getMonth():today.getMonth();
+  const sel=document.getElementById('ab-service');
+  sel.innerHTML='<option value="">請選擇</option>';
+  if(!barber) return;
+  getServices(barber,month).forEach(s=>{
+    const opt=document.createElement('option');
+    opt.value=s.id; opt.textContent=s.label+(s.price?'　$'+s.price:'');
+    sel.appendChild(opt);
+  });
+  renderAbSlots();
+}
+function abServiceChange(){
+  const svc=document.getElementById('ab-service').value;
+  document.getElementById('ab-special-price-wrap').style.display=svc==='special-color'?'block':'none';
+  document.getElementById('ab-children-price-wrap').style.display=svc==='children'?'block':'none';
+  document.getElementById('ab-adult-child-price-wrap').style.display=svc==='adult-child'?'block':'none';
+  renderAbSlots();
+}
+function renderAbSlots(){
+  const barber=document.getElementById('ab-barber').value;
+  const dateStr=document.getElementById('ab-date').value;
+  const sel=document.getElementById('ab-time');
+  if(!barber||!dateStr){
+    sel.innerHTML='<option value="">請先選理髮師與日期</option>';
+    return;
+  }
+
+  const serviceId=document.getElementById('ab-service').value;
+
+  // For special-color, require hours to be selected first
+  if(serviceId==='special-color'){
+    const hoursEl=document.getElementById('ab-special-hours');
+    const h=hoursEl?parseInt(hoursEl.value):NaN;
+    if(!h||isNaN(h)){
+      sel.innerHTML='<option value="">請先選擇所需時數</option>';
+      return;
+    }
+  }
+
+  const d=parseDate(dateStr);
+  const dayNum=d.getDate();
+  const mk=dateStr.substring(0,7);
+
+  // Holiday check
+  const holidays=getHolidays();
+  const monthHols=holidays[mk];
+  if(!monthHols){
+    sel.innerHTML='<option value="">該月尚未開放預約</option>';
+    return;
+  }
+  const barberHols=monthHols[barber]||[];
+  if(barberHols.includes(dayNum)){
+    sel.innerHTML='<option value="">該日為休假日</option>';
+    return;
+  }
+
+  // Build booked set — support N slots per booking
+  const allSlots=getSlotsForDow(d.getDay());
+  const bk=getBookings();
+  const booked=new Set();
+  bk.filter(b=>b.date===dateStr&&b.barber===barber&&b.status!=='cancelled').forEach(b=>{
+    const n=b.slots||1;
+    for(let i=0;i<n;i++) booked.add(b.hour+i);
+  });
+
+  // Determine needed slots
+  const month=d.getMonth();
+  const service=getServices(barber,month).find(s=>s.id===serviceId);
+  let need=1;
+  if(serviceId==='special-color'){
+    need=parseInt(document.getElementById('ab-special-hours').value)||1;
+  } else if(service && service.slots){
+    need=service.slots;
+  }
+
+  const cur=sel.value;
+  sel.innerHTML='<option value="">選擇開始時段</option>';
+
+  allSlots.forEach(h=>{
+    // Check need consecutive free slots starting at h
+    let canFit=true;
+    for(let i=0;i<need;i++){
+      if(booked.has(h+i)||!allSlots.includes(h+i)){
+        canFit=false; break;
+      }
+    }
+    if(canFit){
+      const opt=document.createElement('option');
+      opt.value=h;
+      const endH=h+need;
+      opt.textContent=String(h).padStart(2,'0')+':00 – '+String(endH).padStart(2,'0')+':00'+(need>1?' ('+need+'小時)':'');
+      if(String(h)===cur) opt.selected=true;
+      sel.appendChild(opt);
+    }
+  });
+  if(sel.options.length<=1){
+    sel.innerHTML='<option value="">當日無連續'+need+'小時空檔</option>';
+  }
+}
+function abCheckPhone(){
+  const phone=document.getElementById('ab-phone').value;
+  const cancels=getCancels();
+  const count=(cancels[phone]||{}).count||0;
+  const warn=document.getElementById('ab-phone-warn');
+  if(count>=2){
+    warn.textContent='注意：此號碼已累積 '+count+' 次取消紀錄！'+(count>=3?' 線上預約已封鎖。':'');
+    warn.style.display='block';
+  } else { warn.style.display='none'; }
+}
+async function addBookingSubmit(){
+  const barber=document.getElementById('ab-barber').value;
+  const typeVal=document.getElementById('ab-type').value;
+  const serviceId=document.getElementById('ab-service').value;
+  const dateStr=document.getElementById('ab-date').value;
+  const hour=parseInt(document.getElementById('ab-time').value);
+  const name=document.getElementById('ab-name').value.trim();
+  const title=document.getElementById('ab-title').value;
+  const phone=document.getElementById('ab-phone').value.trim();
+  if(!barber||!serviceId||!dateStr||!hour||!name||!phone){ alert('請填寫所有必填欄位'); return; }
+  if(!/^09\d{8}$/.test(phone)){ alert('手機號碼格式不正確'); return; }
+  const month=parseDate(dateStr).getMonth();
+  const services=getServices(barber,month);
+  const service=services.find(s=>s.id===serviceId);
+  let price=service.price;
+  let slotsCount=service.slots||1;
+  if(serviceId==='special-color'){
+    const hoursEl=document.getElementById('ab-special-hours');
+    const h=hoursEl?parseInt(hoursEl.value):NaN;
+    if(!h||isNaN(h)){ alert('請選擇特殊色染髮所需時數'); return; }
+    slotsCount=h;
+    const sp=parseInt(document.getElementById('ab-special-price').value);
+    price=sp>0?sp:null;
+  }
+  if(serviceId==='children'){
+    const cp=parseInt(document.getElementById('ab-children-price').value);
+    price=cp>0?cp:null;
+    slotsCount=1;
+  }
+  if(serviceId==='adult-child'){
+    const ap=parseInt(document.getElementById('ab-adult-child-price').value);
+    price=ap>0?ap:null;
+    slotsCount=1;
+  }
+  const bk=getBookings();
+  const newB={
+    id:'BK'+Date.now(), barber, barberLabel:barber==='yujun'?'渝鈞':'錫恩',
+    serviceId, serviceLabel:service.label, price, slots:slotsCount,
+    date:dateStr, hour, name, title, phone,
+    notes:document.getElementById('ab-notes').value,
+    tags:parseTags(document.getElementById('ab-tags').value),
+    status:'confirmed', type:typeVal,
+    createdAt:new Date().toISOString(), source:'admin'
+  };
+  await upsertBookingDoc(newB);
+  addNotif('新增預約：'+name+title+' '+dateStr+' '+String(hour).padStart(2,'0')+':00 ('+service.label+')');
+  renderOverview(); renderCalPage(); renderBookingsPage();
+  abReset();
+}
+function abReset(){
+  document.getElementById('ab-barber').value='';
+  document.getElementById('ab-service').innerHTML='<option value="">請先選理髮師</option>';
+  document.getElementById('ab-date').value='';
+  document.getElementById('ab-time').innerHTML='<option value="">請先選日期</option>';
+  document.getElementById('ab-name').value='';
+  document.getElementById('ab-phone').value='';
+  document.getElementById('ab-notes').value='';
+  document.getElementById('ab-special-price-wrap').style.display='none';
+  document.getElementById('ab-children-price-wrap').style.display='none';
+  document.getElementById('ab-adult-child-price-wrap').style.display='none';
+  document.getElementById('ab-special-price').value='';
+  document.getElementById('ab-children-price').value='';
+  document.getElementById('ab-adult-child-price').value='';
+  document.getElementById('ab-special-hours').value='';
+  document.getElementById('ab-tags').value='';
+}
+
+// ── QUICK ADD ──
+let quickData={};
+function quickAdd(barber,dateStr,hour){
+  quickData={barber,dateStr,hour};
+  const month=parseDate(dateStr).getMonth();
+  const services=getServices(barber,month).filter(s=>!['special-color','children'].includes(s.id));
+  document.getElementById('quick-modal-body').innerHTML=`
+    <div style="margin-bottom:14px;font-size:13px;color:var(--text-mid)">
+      ${barber==='yujun'?'渝鈞':'錫恩'} · ${dateStr} ${String(hour).padStart(2,'0')}:00
+    </div>
+    <div class="form-row">
+      <div><label class="f-label">客人類型</label>
+        <select class="f-select" id="q-type"><option value="designated">指定客</option><option value="walkin">散客</option></select>
+      </div>
+    </div>
+    <div class="form-row">
+      <div><label class="f-label">服務項目</label>
+        <select class="f-select" id="q-service">
+          ${services.map(s=>`<option value="${s.id}">${s.label}${s.price?'　$'+s.price:''}</option>`).join('')}
+        </select>
+      </div>
+    </div>
+    <div class="form-row cols-2">
+      <div><label class="f-label">稱謂</label>
+        <select class="f-select" id="q-title"><option value="先生">先生</option><option value="小姐">小姐</option></select>
+      </div>
+      <div><label class="f-label">姓氏</label>
+        <input class="f-input" type="text" id="q-name" placeholder="姓氏">
+      </div>
+    </div>
+    <div class="form-row">
+      <div><label class="f-label">手機號碼</label>
+        <input class="f-input" type="tel" id="q-phone" placeholder="09xxxxxxxx" maxlength="10">
+      </div>
+    </div>
+  `;
+  document.getElementById('quick-modal').classList.add('active');
+}
+async function quickAddSubmit(){
+  const {barber,dateStr,hour}=quickData;
+  const serviceId=document.getElementById('q-service').value;
+  const name=document.getElementById('q-name').value.trim();
+  const title=document.getElementById('q-title').value;
+  const phone=document.getElementById('q-phone').value.trim();
+  const typeVal=document.getElementById('q-type').value;
+  if(!name||!phone){ alert('請填寫姓氏與手機號碼'); return; }
+  if(!/^09\d{8}$/.test(phone)){ alert('手機號碼格式不正確'); return; }
+  const month=parseDate(dateStr).getMonth();
+  const service=getServices(barber,month).find(s=>s.id===serviceId);
+  const newB={
+    id:'BK'+Date.now(), barber, barberLabel:barber==='yujun'?'渝鈞':'錫恩',
+    serviceId, serviceLabel:service.label, price:service.price, slots:service.slots||1,
+    date:dateStr, hour, name, title, phone, notes:'',
+    status:'confirmed', type:typeVal,
+    createdAt:new Date().toISOString(), source:'admin'
+  };
+  await upsertBookingDoc(newB);
+  addNotif('新增預約：'+name+title+' '+dateStr+' '+String(hour).padStart(2,'0')+':00');
+  closeModal('quick-modal');
+  renderOverview(); renderCalPage();
+}
+
+// ── SEARCH ──
+function searchCustomer(){
+  const phone=document.getElementById('search-phone').value.trim();
+  const bk=getBookings().filter(b=>b.phone===phone).sort((a,b2)=>b2.date.localeCompare(a.date));
+  const cancels=getCancels();
+  const cancelCount=(cancels[phone]||{}).count||0;
+  if(bk.length===0&&cancelCount===0){
+    document.getElementById('search-result').innerHTML='<div style="color:var(--text-light);font-size:13px">查無此電話號碼的預約紀錄。</div>';
+    return;
+  }
+  document.getElementById('search-result').innerHTML=`
+    <div style="margin-bottom:12px;font-size:13px;color:var(--text-mid)">
+      找到 ${bk.length} 筆預約紀錄，累積取消 <strong style="color:${cancelCount>=3?'var(--red)':'var(--text-dark)'}">${cancelCount}</strong> 次
+      ${cancelCount>=3?'<span style="color:var(--red);font-weight:600">（線上預約已封鎖）</span>':''}
+    </div>
+    ${bk.map(b=>`
+      <div onclick="tryOpenBookingModal('${b.id}')" style="display:flex;align-items:flex-start;gap:10px;padding:12px;border-radius:10px;margin-bottom:8px;background:${b.barber==='yujun'?'#f7f0f0':'#f0f4f7'};border:1px solid ${b.barber==='yujun'?'var(--yujun)':'var(--xien)'};cursor:pointer">
+        <div style="flex:1;min-width:0">
+          <div style="font-size:13px;font-weight:600">${b.date} ${String(b.hour).padStart(2,'0')}:00 · ${b.barberLabel}</div>
+          <div style="font-size:12px;color:var(--text-light);margin-top:2px">${b.serviceLabel}${b.finalPrice!==undefined&&b.finalPrice!==null?' · $'+b.finalPrice:b.price?' · $'+b.price:''}</div>
+          ${renderTags(b.tags||[])}
+          ${b.cancelReason?`<div style="font-size:11px;color:var(--red);margin-top:3px">取消原因：${b.cancelReason}</div>`:''}
+        </div>
+        <span class="badge ${b.status==='cancelled'?'cancelled':b.status==='rebooked'?'rebooked':'confirmed'}">${b.status==='cancelled'?'已取消':b.status==='rebooked'?'已改期':'已確認'}</span>
+      </div>
+    `).join('')}
+  `;
+}
+
+// ── CANCELS PAGE ──
+function initCancelYearFilter(){
+  const sel=document.getElementById('cancel-filter-year');
+  if(!sel) return;
+  const years=new Set();
+  const cancels=getCancels();
+  Object.values(cancels).forEach(data=>{
+    (data.records||[]).forEach(r=>{ if(r.date) years.add(r.date.substring(0,4)); });
+  });
+  // Also add current year
+  years.add(String(today.getFullYear()));
+  const cur=sel.value;
+  sel.innerHTML='<option value="">全部年份</option>';
+  [...years].sort().reverse().forEach(y=>{
+    const o=document.createElement('option');
+    o.value=y; o.textContent=y+'年';
+    if(y===cur) o.selected=true;
+    sel.appendChild(o);
+  });
+}
+function renderCancelsPage(){
+  initCancelYearFilter();
+  const cancels=getCancels();
+  const filterPhone=document.getElementById('cancel-search-phone').value.trim();
+  const filterYear=document.getElementById('cancel-filter-year').value;
+  let entries=Object.entries(cancels);
+  if(filterPhone) entries=entries.filter(([p])=>p.includes(filterPhone));
+  // Filter by year: keep entries that have at least one record in the year
+  if(filterYear){
+    entries=entries.map(([phone,data])=>{
+      const filteredRecords=(data.records||[]).filter(r=>r.date&&r.date.startsWith(filterYear));
+      return [phone,{...data, records:filteredRecords, count: filteredRecords.length}];
+    }).filter(([,data])=>data.records.length>0);
+  }
+  entries.sort((a,b2)=>b2[1].count-a[1].count);
+  if(entries.length===0){
+    document.getElementById('cancels-list').innerHTML='<div style="color:var(--text-light);font-size:13px;padding:8px 0">無取消紀錄。</div>';
+    return;
+  }
+  document.getElementById('cancels-list').innerHTML=`
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>電話</th>
+          <th>${filterYear?filterYear+'年取消次數':'累積取消次數'}</th>
+          <th>最近取消日期</th>
+          <th>狀態</th>
+          <th>詳情</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${entries.map(([phone,data])=>{
+          const allData=getCancels()[phone]||{count:0,records:[]};
+          const totalCount=filterYear?'':allData.count;
+          const lastDate=data.records.length?data.records[data.records.length-1].date:'—';
+          const blocked=allData.count>=3;
+          return `<tr>
+            <td>${phone}</td>
+            <td style="color:${data.count>=3?'var(--red)':'var(--text-dark)'};font-weight:${data.count>=3?'700':'400'}">${data.count}${filterYear&&totalCount!==''?' (累計'+totalCount+')':''}</td>
+            <td>${lastDate}</td>
+            <td>${blocked?'<span class="badge cancelled">已封鎖</span>':'<span class="badge confirmed">正常</span>'}</td>
+            <td><button class="btn btn-secondary btn-sm" onclick="showCancelDetail('${phone}','${filterYear}')">查看</button></td>
+          </tr>`;
+        }).join('')}
+      </tbody>
+    </table>
+  `;
+}
+function showCancelDetail(phone, filterYear){
+  const allData=getCancels()[phone]||{count:0,records:[]};
+  const bk=getBookings();
+  let records=allData.records||[];
+  if(filterYear) records=records.filter(r=>r.date&&r.date.startsWith(filterYear));
+  document.getElementById('cancel-detail-title').textContent='取消紀錄 · '+phone;
+  if(records.length===0){
+    document.getElementById('cancel-detail-body').innerHTML='<div style="color:var(--text-light);font-size:13px">無紀錄</div>';
+  } else {
+    document.getElementById('cancel-detail-body').innerHTML=`
+      <div style="font-size:13px;color:var(--text-mid);margin-bottom:12px">累積取消 <strong>${allData.count}</strong> 次${allData.count>=3?' · <span style="color:var(--red);font-weight:700">線上預約已封鎖</span>':''}</div>
+      ${records.map(r=>{
+        const booking=bk.find(b=>b.id===r.bookingId);
+        return `<div style="padding:10px 12px;border-radius:8px;background:var(--cream);border:1px solid var(--border);margin-bottom:8px;font-size:13px;line-height:1.8">
+          <div style="font-weight:600;color:var(--red);margin-bottom:4px">取消日期：${r.date||'—'}</div>
+          ${booking?`
+            <div>理髮師：${booking.barberLabel}</div>
+            <div>服務：${booking.serviceLabel}</div>
+            <div>時段：${booking.date} ${String(booking.hour).padStart(2,'0')}:00</div>
+            <div>備註：${booking.notes||'無'}</div>
+          `:'<div style="color:var(--text-light)">（預約資料不存在）</div>'}
+          <div style="color:var(--text-light);font-size:11px;margin-top:4px">取消時間：${r.cancelledAt?r.cancelledAt.replace('T',' ').substring(0,16):'—'}</div>
+        </div>`;
+      }).join('')}
+    `;
+  }
+  document.getElementById('cancel-detail-modal').classList.add('active');
+}
+
+// ── HOLIDAYS ──
+// ── HOLIDAYS (CALENDAR UI) ──
+let holBarber = 'yujun';
+let holYear = today.getFullYear();
+let holMonth = today.getMonth(); // 0-indexed
+// Working copy of selected days for current barber/month (Set of day numbers)
+let holSelected = new Set();
+
+function initHolForm(){
+  holYear = today.getFullYear();
+  holMonth = today.getMonth();
+  holBarber = 'yujun';
+  holLoadSelected();
+  renderHolCal();
+  renderHolOverviewCal();
+  holUpdateBarberButtons();
+}
+
+function holSelectBarber(b){
+  holBarber = b;
+  holUpdateBarberButtons();
+  holLoadSelected();
+  renderHolCal();
+}
+
+function holUpdateBarberButtons(){
+  const yBtn = document.getElementById('hol-btn-yujun');
+  const xBtn = document.getElementById('hol-btn-xien');
+  if(!yBtn||!xBtn) return;
+  const yColor = '#c9b0b0', xColor = '#8aa4b8';
+  if(holBarber==='yujun'){
+    yBtn.style.borderColor=yColor; yBtn.style.background='#f7f0f0'; yBtn.style.color='var(--brown)';
+    xBtn.style.borderColor='var(--border)'; xBtn.style.background='var(--cream)'; xBtn.style.color='var(--text-mid)';
+  } else {
+    xBtn.style.borderColor=xColor; xBtn.style.background='#f0f4f7'; xBtn.style.color='var(--brown)';
+    yBtn.style.borderColor='var(--border)'; yBtn.style.background='var(--cream)'; yBtn.style.color='var(--text-mid)';
+  }
+  const dot = document.getElementById('hol-legend-dot');
+  if(dot) dot.style.background = holBarber==='yujun' ? yColor : xColor;
+}
+
+function holLoadSelected(){
+  const mk = holYear+'-'+String(holMonth+1).padStart(2,'0');
+  const h = getHolidays();
+  const days = (h[mk]||{})[holBarber]||[];
+  holSelected = new Set(days);
+}
+
+function holPrevMonth(){
+  holMonth--;
+  if(holMonth<0){ holMonth=11; holYear--; }
+  holLoadSelected();
+  renderHolCal();
+  renderHolOverviewCal();
+}
+function holNextMonth(){
+  holMonth++;
+  if(holMonth>11){ holMonth=0; holYear++; }
+  holLoadSelected();
+  renderHolCal();
+  renderHolOverviewCal();
+}
+
+function renderHolCal(){
+  const mn=['一月','二月','三月','四月','五月','六月','七月','八月','九月','十月','十一月','十二月'];
+  const titleEl = document.getElementById('hol-cal-title');
+  if(titleEl) titleEl.textContent = holYear+'年 '+mn[holMonth];
+  const container = document.getElementById('hol-cal-days');
+  if(!container) return;
+  container.innerHTML='';
+  const firstDay = new Date(holYear, holMonth, 1).getDay();
+  const daysInMonth = new Date(holYear, holMonth+1, 0).getDate();
+  const dotColor = holBarber==='yujun' ? '#c9b0b0' : '#8aa4b8';
+  const bgColor  = holBarber==='yujun' ? '#f0e4e4' : '#e4edf5';
+
+  for(let i=0;i<firstDay;i++){
+    const el=document.createElement('div'); el.style.cssText='aspect-ratio:1';
+    container.appendChild(el);
+  }
+  for(let d=1;d<=daysInMonth;d++){
+    const isOff = holSelected.has(d);
+    const el=document.createElement('div');
+    el.style.cssText=`aspect-ratio:1;display:flex;align-items:center;justify-content:center;
+      border-radius:50%;font-size:13px;cursor:pointer;transition:all 0.15s;font-weight:600;
+      border:2px solid ${isOff?dotColor:'transparent'};
+      background:${isOff?bgColor:'transparent'};
+      color:${isOff?'var(--brown)':'var(--text-dark)'};`;
+    el.textContent=d;
+    el.title = isOff?'點擊取消休假':'點擊設為休假';
+    el.addEventListener('click',()=>holToggleDay(d));
+    container.appendChild(el);
+  }
+}
+
+function holToggleDay(d){
+  if(holSelected.has(d)) holSelected.delete(d);
+  else holSelected.add(d);
+  renderHolCal();
+}
+
+async function holSave(){
+  const mk = holYear+'-'+String(holMonth+1).padStart(2,'0');
+  const h = getHolidays();
+  if(!h[mk]) h[mk]={yujun:[],xien:[]};
+  h[mk][holBarber] = [...holSelected].sort((a,b)=>a-b);
+  saveHolidaysData(h);
+  renderCalPage();
+  renderHolOverviewCal();
+  const msg = document.getElementById('hol-save-msg');
+  if(msg){ msg.style.display='inline'; setTimeout(()=>msg.style.display='none',2500); }
+}
+
+function renderHolOverviewCal(){
+  const container = document.getElementById('hol-overview-cal');
+  if(!container) return;
+  container.innerHTML='';
+  const h = getHolidays();
+  const mk = holYear+'-'+String(holMonth+1).padStart(2,'0');
+  const data = h[mk]||{};
+  const yujunSet = new Set(data.yujun||[]);
+  const xienSet  = new Set(data.xien||[]);
+  const firstDay = new Date(holYear,holMonth,1).getDay();
+  const daysInMonth = new Date(holYear,holMonth+1,0).getDate();
+
+  for(let i=0;i<firstDay;i++){
+    const el=document.createElement('div'); el.style.cssText='aspect-ratio:1';
+    container.appendChild(el);
+  }
+  for(let d=1;d<=daysInMonth;d++){
+    const isY=yujunSet.has(d), isX=xienSet.has(d);
+    const el=document.createElement('div');
+    let bg='transparent', border='transparent', color='var(--text-dark)';
+    if(isY&&isX){
+      bg='linear-gradient(135deg,#f0e4e4 50%,#e4edf5 50%)';
+      border='#b09090'; color='var(--brown)';
+    } else if(isY){
+      bg='#f0e4e4'; border='#c9b0b0'; color='var(--brown)';
+    } else if(isX){
+      bg='#e4edf5'; border='#8aa4b8'; color='var(--brown)';
+    }
+    el.style.cssText=`aspect-ratio:1;display:flex;align-items:center;justify-content:center;
+      border-radius:50%;font-size:12px;font-weight:${(isY||isX)?'700':'400'};
+      border:2px solid ${border};background:${bg};color:${color};`;
+    el.textContent=d;
+    container.appendChild(el);
+  }
+}
+
+function renderHolidayOverview(){ renderHolOverviewCal(); }
+
+// Keep saveHolidays as alias for compatibility
+function saveHolidays(){ holSave(); }
+
+// ── SETTLE ──
+let settlerPick=null;
+function pickSettler(who){
+  settlerPick=who;
+  document.getElementById('settle-yujun').classList.toggle('active',who==='yujun');
+  document.getElementById('settle-xien').classList.toggle('active',who==='xien');
+}
+
+function updateSettleTodayStatus(){
+  const dateStr=formatDate(today);
+  const settlements=getSettlements();
+  const todaySettlement=settlements.filter(s=>s.date===dateStr).pop();
+  const statusEl=document.getElementById('settle-today-status');
+  const resettleBtn=document.getElementById('resettle-btn');
+  if(todaySettlement){
+    statusEl.style.display='block';
+    statusEl.textContent='今日已由 '+todaySettlement.settler+' 結款　$'+todaySettlement.revenue.toLocaleString()
+      +(todaySettlement.resettleReason?' ｜ 重新結款原因：'+todaySettlement.resettleReason:'');
+    resettleBtn.style.display='inline-block';
+  } else {
+    statusEl.style.display='none';
+    resettleBtn.style.display='none';
+  }
+}
+
+function showPriceWarning(list){
+  // Use the settle-modal to show the warning instead of alert()
+  const el = document.getElementById('settle-modal-text');
+  el.style.color = 'var(--red)';
+  el.style.fontSize = '13px';
+  el.style.textAlign = 'left';
+  el.style.whiteSpace = 'pre-line';
+  el.textContent = '以下預約金額為空或為 0\n請先填入金額後再結款：\n\n' + list;
+  document.getElementById('settle-modal').classList.add('active');
+  // Reset style after close
+  document.getElementById('settle-modal').querySelector('.btn').onclick = function(){
+    el.style.color = ''; el.style.fontSize = ''; el.style.textAlign = ''; el.style.whiteSpace = '';
+    closeModal('settle-modal');
+  };
+}
+
+async function confirmSettle(){
+  if(!settlerPick){ showSettleMsg('請先選擇結款人'); return; }
+  const pw=document.getElementById('settle-pw').value;
+  if(pw!==ADMIN_PW){ showSettleMsg('密碼錯誤，請重新輸入'); return; }
+  const dateStr=formatDate(today);
+  const bk=getBookings().filter(b=>b.date===dateStr&&b.status!=='cancelled');
+
+  const missingPrice = checkMissingPrices(bk);
+  if(missingPrice.length>0){
+    const list=missingPrice.map(b=>
+      `• ${b.name}${b.title}  ${String(b.hour).padStart(2,'0')}:00  ${b.serviceLabel}`
+    ).join('\n');
+    showPriceWarning(list);
+    return;
+  }
+
+  const label=settlerPick==='yujun'?'渝鈞':'錫恩';
+  const rev=bk.reduce((a,b)=>a+(b.finalPrice!==undefined&&b.finalPrice!==null?b.finalPrice:(b.price||0)),0);
+  const settlements=getSettlements();
+  settlements.push({date:dateStr,settler:label,revenue:rev,year:today.getFullYear(),month:today.getMonth(),at:new Date().toISOString()});
+  saveSettlements(settlements);
+  const el = document.getElementById('settle-modal-text');
+  el.style.color=''; el.style.fontSize=''; el.style.textAlign=''; el.style.whiteSpace='';
+  el.textContent='確認 '+label+' 已結款\n'+dateStr+'　$'+rev.toLocaleString();
+  document.getElementById('settle-modal').querySelector('.btn').onclick=function(){ closeModal('settle-modal'); };
+  document.getElementById('settle-modal').classList.add('active');
+  document.getElementById('settle-pw').value='';
+  renderSettleRecords();
+  updateSettleTodayStatus();
+  renderOverview();
+}
+
+function showSettleMsg(msg){
+  const el=document.getElementById('settle-today-status');
+  el.style.display='block';
+  el.style.color='var(--red)';
+  el.textContent=msg;
+  setTimeout(()=>{ el.style.color=''; updateSettleTodayStatus(); },3000);
+}
+
+function openResettleModal(){
+  document.getElementById('resettle-reason').value='';
+  document.getElementById('resettle-pw').value='';
+  document.getElementById('resettle-err').style.display='none';
+  document.getElementById('resettle-modal').classList.add('active');
+}
+
+function hasValidPrice(b){
+  const p = (b.finalPrice !== undefined && b.finalPrice !== null) ? b.finalPrice : b.price;
+  return (p !== null && p !== undefined && p !== '' && Number(p) > 0);
+}
+function checkMissingPrices(bk){
+  return bk.filter(b => !hasValidPrice(b));
+}
+
+async function confirmResettle(){
+  const reason=document.getElementById('resettle-reason').value.trim();
+  const pw=document.getElementById('resettle-pw').value;
+  if(!reason){ alert('請填寫重新結款原因'); return; }
+  if(pw!==ADMIN_PW){
+    document.getElementById('resettle-err').style.display='block';
+    return;
+  }
+  if(!settlerPick){ alert('請選擇結款人'); return; }
+  const dateStr=formatDate(today);
+  const bk=getBookings().filter(b=>b.date===dateStr&&b.status!=='cancelled');
+
+  const missingPrice = checkMissingPrices(bk);
+  if(missingPrice.length>0){
+    const list=missingPrice.map(b=>
+      `• ${b.name}${b.title}  ${String(b.hour).padStart(2,'0')}:00  ${b.serviceLabel}`
+    ).join('\n');
+    closeModal('resettle-modal');
+    showPriceWarning(list);
+    return;
+  }
+
+  const label=settlerPick==='yujun'?'渝鈞':'錫恩';
+  const rev=bk.reduce((a,b)=>a+(b.finalPrice!==undefined?b.finalPrice:(b.price||0)),0);
+  const settlements=getSettlements();
+  settlements.push({
+    date:dateStr, settler:label, revenue:rev,
+    year:today.getFullYear(), month:today.getMonth(),
+    at:new Date().toISOString(),
+    isResettle:true, resettleReason:reason
+  });
+  saveSettlements(settlements);
+  closeModal('resettle-modal');
+  document.getElementById('settle-modal-text').textContent='重新結款完成\n'+label+'　'+dateStr+'　$'+rev.toLocaleString()+'\n原因：'+reason;
+  document.getElementById('settle-modal').classList.add('active');
+  document.getElementById('resettle-pw').value='';
+  renderSettleRecords();
+  updateSettleTodayStatus();
+  renderOverview();
+}
+
+function renderSettleRecords(){
+  const s=getSettlements().slice().reverse();
+  updateSettleTodayStatus();
+  if(s.length===0){ document.getElementById('settle-records').innerHTML='<div style="color:var(--text-light);font-size:13px">尚無結款紀錄</div>'; return; }
+  document.getElementById('settle-records').innerHTML=`
+    <table class="data-table">
+      <thead><tr><th>結款時間</th><th>結款人</th><th>當日業績</th><th>備註</th></tr></thead>
+      <tbody>${s.map(x=>{
+        const timeStr = x.at ? x.at.replace('T',' ').substring(0,16) : '—';
+        const noteStyle = x.isResettle ? 'color:var(--red);font-weight:600' : 'color:var(--text-light)';
+        const noteText = x.isResettle ? '重新結款｜'+x.resettleReason : '—';
+        return `<tr>
+          <td style="font-size:12px;white-space:nowrap">${timeStr}</td>
+          <td>${x.settler}</td>
+          <td>$${x.revenue.toLocaleString()}</td>
+          <td style="font-size:12px;${noteStyle}">${noteText}</td>
+        </tr>`;
+      }).join('')}</tbody>
+    </table>
+  `;
+}
+
+// ── NOTIFICATIONS (BELL DRAWER) ──
+function addNotif(msg){
+  const n=getNotifs();
+  n.unshift({msg,time:new Date().toISOString(),read:false});
+  if(n.length>100) n.pop();
+  saveNotifs(n);
+  updateBellDot();
+  renderNotifDrawer();
+}
+function updateBellDot(){
+  const n=getNotifs();
+  const unread=n.filter(x=>!x.read).length;
+  const dot=document.getElementById('bell-dot');
+  if(dot) dot.classList.toggle('show', unread>0);
+}
+function renderNotifDrawer(){
+  const n=getNotifs();
+  const body=document.getElementById('notif-drawer-body');
+  if(!body) return;
+  if(n.length===0){
+    body.innerHTML='<div style="color:var(--text-light);font-size:13px;padding:12px 0">無通知</div>';
+    return;
+  }
+  body.innerHTML=n.map(x=>`
+    <div class="notif-item ${x.read?'':'unread'}">
+      <div class="notif-item-time">${x.time.replace('T',' ').substring(0,16)}</div>
+      <div class="notif-item-msg">${x.msg}</div>
+    </div>
+  `).join('');
+}
+function toggleNotifDrawer(){
+  const drawer=document.getElementById('notif-drawer');
+  const overlay=document.getElementById('notif-drawer-overlay');
+  const isOpen=drawer.classList.contains('open');
+  if(isOpen){
+    drawer.classList.remove('open');
+    overlay.classList.remove('show');
+  } else {
+    drawer.classList.add('open');
+    overlay.classList.add('show');
+    // Mark all read
+    const n=getNotifs();
+    n.forEach(x=>x.read=true);
+    saveNotifs(n);
+    updateBellDot();
+    renderNotifDrawer();
+  }
+}
+function closeNotifDrawer(){
+  document.getElementById('notif-drawer').classList.remove('open');
+  document.getElementById('notif-drawer-overlay').classList.remove('show');
+}
+function clearNotifs(){
+  saveNotifs([]);
+  renderNotifDrawer();
+  updateBellDot();
+}
+
+// ── MODALS ──
+function closeModal(id){ document.getElementById(id).classList.remove('active'); }
+document.addEventListener('click',e=>{ if(e.target.classList.contains('modal-overlay')) e.target.classList.remove('active'); });
+</script>
+<script>
+// Safe async font load — won't throw Script error on file:// or offline
+(function(){
+  try {
+    var l = document.createElement('link');
+    l.rel = 'stylesheet';
+    l.href = 'https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@300;400;500;600;700&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Noto+Sans+TC:wght@300;400;500&display=swap';
+    document.head.appendChild(l);
+  } catch(e){}
+})();
+</script>
+</body>
+</html>
